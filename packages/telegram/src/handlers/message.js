@@ -17,7 +17,7 @@ const replayWithSplit = (ctx, message) => message
 const handleDirectMessages = async ctx => {
   const query = ctx.message.text;
 
-  if (query.match(/^[@]*[a-zA-Z._-]+$/)) {
+  if (query && query.match(/^[@]*[a-zA-Z._-]+$/)) {
     const verifiedTokens = await getVerifiedTokens(query.match(/^[@]*([a-zA-Z._-]+)$/)[1]);
 
     if (verifiedTokens.length > 0) {
@@ -29,7 +29,7 @@ const handleDirectMessages = async ctx => {
     } else {
       return ctx.reply(`User @${query} does not represent any ORGiD registered company`);
     }
-  } else if (query.match(/^0x\w{64}$/)) {
+  } else if (query && query.match(/^0x\w{64}$/)) {
     const didResult = await resolveOrgId(query);
     await Promise.all(replayWithSplit(ctx, JSON.stringify(didResult, null, 2)));
   } else {
