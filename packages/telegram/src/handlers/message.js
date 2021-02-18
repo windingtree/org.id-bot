@@ -1,21 +1,32 @@
+const { Markup } = require('telegraf');
 const { getVerifiedTokens } = require('../utils/auth');
 const {
   setSession,
   addVerifiedUserToSession
 } = require('../utils/session');
 const { resolveOrgId } = require('../utils/auth');
+const { replayWithSplit } = require('../utils/message');
 
 const {
   unauthorizedUserMessagesLimit,
   messagesHandlerMode
 } = require('../config');
 
-const replayWithSplit = (ctx, message) => message
-    .match(/(.|[\r\n]){1,4095}/gm)
-    .map(m => ctx.reply(`${m}\n`));
+const orgIdsButton = orgIds => Markup.inlineKeyboard(
+  orgIds.map(
+    (orgId, index) => Markup.button.callback(
+      orgId,
+      `resolveOrgId:${index}`
+    )
+  )
+);
 
 const handleDirectMessages = async ctx => {
-  const query = ctx.message.text;
+  let query = ctx.message.text;
+
+  if (ctx.message.forward_from) {
+    query = ctx.message.forward_from.username;
+  }
 
   if (query && query.match(/^[@]*[a-zA-Z._-]+$/)) {
     const verifiedTokens = await getVerifiedTokens(query.match(/^[@]*([a-zA-Z._-]+)$/)[1]);
@@ -25,13 +36,16 @@ const handleDirectMessages = async ctx => {
       for (const verifiedToken of verifiedTokens) {
         orgIds.push(verifiedToken.sub.did.split(':')[2]);
       }
-      return ctx.reply(`User @${query} is officially representing following ORGiDs: ${orgIds.join('; ')}`);
+      return ctx.reply(
+        `User @${query} is officially representing following ORGiDs:`,
+        orgIdsButton(orgIds)
+      );
     } else {
       return ctx.reply(`User @${query} does not represent any ORGiD registered company`);
     }
   } else if (query && query.match(/^0x\w{64}$/)) {
     const didResult = await resolveOrgId(query);
-    await Promise.all(replayWithSplit(ctx, JSON.stringify(didResult, null, 2)));
+    await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
   } else {
     return ctx.reply(`Your "${query}" does not looks like an ORGiD neither profile name`);
   }
