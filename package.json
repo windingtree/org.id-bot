@@ -1,0 +1,40 @@
+{
+  "name": "@windingtree/org.id-bot",
+  "version": "0.1.0",
+  "description": "Monorepo of an interactive ORGiD resolver for social networks and web",
+  "private": true,
+  "scripts": {
+    "bootstrap": "npx lerna bootstrap"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/windingtree/org.id-bot.git"
+  },
+  "keywords": [
+    "orgid",
+    "windingtree",
+    "did",
+    "bot",
+    "telegram",
+    "node.js"
+  ],
+  "author": "Winding Tree Developers <dev@windingtree.com>",
+  "license": "GPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/windingtree/org.id-bot/issues"
+  },
+  "homepage": "https://github.com/windingtree/org.id-bot#readme",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^3.22.1",
+    "yarn": "1.22.10"
+  },
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ]
+  }
+}
