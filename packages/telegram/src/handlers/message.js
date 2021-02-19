@@ -25,8 +25,12 @@ const orgIdsButton = orgIds => Markup.inlineKeyboard(
 const handleDirectMessages = async ctx => {
   let query = ctx.message.text;
 
-  if (ctx.message.forward_from) {
+  console.log('@@@@', ctx.message);
+
+  if (ctx.message.forward_from && ctx.message.forward_from !== ctx.message.chat.username) {
     query = ctx.message.forward_from.username;
+  } else if (ctx.message.forward_sender_name) {
+    query = ctx.message.forward_sender_name;
   }
 
   if (query && query.match(/^[@]*[a-zA-Z._-]+$/)) {
@@ -62,7 +66,7 @@ You can retrieve detailed ORGiD resolutions reports by clicking on the button be
     const didResult = await resolveOrgId(query);
     await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
   } else {
-    return ctx.reply(`Your "${query}" does not looks like an ORGiD neither profile name`);
+    return ctx.reply(`\`${query}\` doesn't look like а social handle. It also doesn't look like an ORGiD`);
   }
 };
 
