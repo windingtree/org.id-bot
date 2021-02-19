@@ -2,8 +2,7 @@ const { Markup } = require('telegraf');
 const { resolveOrgId } = require('../utils/auth');
 const { replayWithSplit } = require('../utils/message');
 const {
-  getDeepValue,
-  toChecksObject
+  getDeepValue
 } = require('../utils/object');
 
 const orgIdButton = orgId => Markup.inlineKeyboard(
@@ -62,8 +61,8 @@ module.exports.onActionResolveOrgIdSummary = async ctx => {
 `);
 
     // Print additional button for getting details
-    await ctx.reply(
-      'You can fetch detailed ORGiD resolution report by clicking on the button below:',
+    await ctx.replyWithMarkdown(
+      `Interested in learning more about the *${name}* ORGiD? Click the button below.`,
       orgIdButton(orgId)
     );
   } catch (error) {

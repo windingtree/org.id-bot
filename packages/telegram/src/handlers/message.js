@@ -6,6 +6,7 @@ const {
 } = require('../utils/session');
 const { resolveOrgId } = require('../utils/auth');
 const { replayWithSplit } = require('../utils/message');
+const { getDeepValue } = require('../utils/object');
 
 const {
   unauthorizedUserMessagesLimit,
@@ -37,10 +38,23 @@ const handleDirectMessages = async ctx => {
       for (const verifiedToken of verifiedTokens) {
         orgIds.push(verifiedToken.sub.did.split(':')[2]);
       }
-      return ctx.reply(
-        `User @${query} is officially representing following ORGiDs:`,
-        orgIdsButton(orgIds)
-      );
+
+      if (verifiedTokens.length === 1) {
+        const { didDocument } = await resolveOrgId(verifiedTokens[0].sub.did.split(':')[2]);
+        const name = getDeepValue(didDocument, 'legalEntity.legalName') ||
+          getDeepValue(didDocument, 'organizationalUnit.name');
+        return ctx.replyWithMarkdown(
+`User *@${query}* is an official representative *${name}*.
+You can retrieve detailed ORGiD resolution report by clicking on the ORGiD button below`,
+          orgIdsButton(orgIds)
+        );
+      } else {
+        return ctx.replyWithMarkdown(
+`User *@${query}* is an official representative of the following ORGiDs.
+You can retrieve detailed ORGiD resolutions reports by clicking on the button below`,
+          orgIdsButton(orgIds)
+        );
+      }
     } else {
       return ctx.reply(`User @${query} does not represent any ORGiD registered company`);
     }
