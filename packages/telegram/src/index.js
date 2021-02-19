@@ -2,8 +2,13 @@ const {
   Telegraf,
   session
 } = require('telegraf');
+const makeHandler = require('lambda-request-handler');
 
-const { botToken } = require('./config');
+const {
+  botToken,
+  webhookEnabled,
+  webhookPath
+} = require('./config');
 const {
   onActionResolveOrgIdSummary,
   onActionResolveOrgId
@@ -11,7 +16,16 @@ const {
 const { onMessage } = require('./handlers/message');
 // const { onInlineQuery } = require('./handlers/inlineQuery');
 
-const bot = new Telegraf(botToken);
+const bot = new Telegraf(
+  botToken,
+  webhookEnabled
+    ? {
+      telegram: {
+        webhookReply: true
+      }
+    }
+    : undefined
+);
 bot.use(session());
 bot.catch(error => console.error('Unhandled error:', error));
 bot.start(ctx => ctx.replyWithMarkdown(`*Hello, i'm ORGiD bot*
@@ -35,4 +49,11 @@ process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 // Start the Bot
-bot.launch();
+if  (!webhookEnabled) {
+  bot.launch();
+}
+
+// AWS Lambda handler
+module.exports.handler = makeHandler(
+  bot.webhookCallback(webhookPath)
+);
