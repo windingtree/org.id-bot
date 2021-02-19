@@ -8,3 +8,5 @@ module.exports.ethereumNetwork = process.env.ETHEREUM_NETWORK;
 module.exports.infuraKey = process.env.INFURA_KEY;
 module.exports.unauthorizedUserMessagesLimit = Number(process.env.UNAUTHORIZED_USER_MESSAGES_LIMIT);
 module.exports.messagesHandlerMode = process.env.MESSAGES_HANDLER_MODE;
+module.exports.webhookEnabled = process.env.WEBHOOK_ENABLED === 'yes';
+module.exports.webhookPath = process.env.WEBHOOK_PATH || '/';
