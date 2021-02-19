@@ -16,7 +16,7 @@ const orgIdsButton = orgIds => Markup.inlineKeyboard(
   orgIds.map(
     (orgId, index) => Markup.button.callback(
       orgId,
-      `resolveOrgId:${index}`
+      `resolveOrgIdSummary:${index}`
     )
   )
 );
@@ -29,7 +29,8 @@ const handleDirectMessages = async ctx => {
   }
 
   if (query && query.match(/^[@]*[a-zA-Z._-]+$/)) {
-    const verifiedTokens = await getVerifiedTokens(query.match(/^[@]*([a-zA-Z._-]+)$/)[1]);
+    query = query.match(/^[@]*([a-zA-Z._-]+)$/)[1];
+    const verifiedTokens = await getVerifiedTokens(query);
 
     if (verifiedTokens.length > 0) {
       const orgIds = [];

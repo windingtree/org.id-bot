@@ -5,6 +5,7 @@ const ethers = require('ethers');
 const Web3 = require('web3');
 const { getAccountsByUsername } = require('./marketplaceApi');
 const { getFile } = require('./ipfs');
+const { toChecksObject } = require('../utils/object');
 
 const {
   ethereumNetwork,
@@ -24,29 +25,6 @@ const createOrgIdResolver = () => {
   return resolver;
 };
 module.exports.createOrgIdResolver = createOrgIdResolver;
-
-// OrgIdResolver checks result converter
-// Returns an object with mapped checks: checkType => checkResult
-const toChecksObject = checks => checks.reduce(
-  (a, {
-    type,
-    passed,
-    errors = [],
-    warnings = []
-  }) => {
-    a = {
-      ...a,
-      [type]: {
-        passed,
-        errors,
-        warnings
-      }
-    };
-    return a;
-  },
-  {}
-);
-module.exports.toChecksObject = toChecksObject;
 
 // Verify auth token
 const verifyToken = async token => {
@@ -156,7 +134,7 @@ const verifyToken = async token => {
 module.exports.verifyToken = verifyToken;
 
 // Get verified tokens by username
-module.exports.getVerifiedTokens = async username => {
+module.exports.getVerifiedTokens = async (username) => {
   const resolvedAccounts = await getAccountsByUsername(username);
   const verifiedTokens = [];
 
