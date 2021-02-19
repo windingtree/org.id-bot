@@ -13,7 +13,7 @@ module.exports.getAccountsByUsername = async username => {
       `/trustedPerson/accountType/telegram/@${username}`,
       'GET'
     );
-    console.log('Accounts API call result:', resolvedAccounts);
+    console.log('Accounts API call result:', username, resolvedAccounts);
   } catch (error) {
     console.log('Error:', error);
   }
