@@ -6,7 +6,7 @@ const Web3 = require('web3');
 const { getAccountsByUsername } = require('./marketplaceApi');
 const { getFile } = require('./ipfs');
 const { toChecksObject } = require('../utils/object');
-const { createError } = require('../utils/error');
+const BotError = require('../utils/error');
 
 const {
   ethereumNetwork,
@@ -36,7 +36,7 @@ const verifyToken = async token => {
   if (typeof token === 'object') {
 
     if (!token.authorization) {
-      throw createError(
+      throw new BotError(
         'Authorization missing',
         403
       );
@@ -45,7 +45,7 @@ const verifyToken = async token => {
     let [ type, authToken ] = token.authorization.split(' ');
 
     if (type !== 'Bearer') {
-      throw createError(
+      throw new BotError(
         'Unknown authorization method',
         403
       );
@@ -61,7 +61,7 @@ const verifyToken = async token => {
 
   // Token should not be expired
   if (exp < (Date.now() / 1000)) {
-    throw createError(
+    throw new BotError(
       'Token is expired',
       403
     );
@@ -69,7 +69,7 @@ const verifyToken = async token => {
 
   // Issuer should be defined
   if (!iss || iss === '') {
-    throw createError(
+    throw new BotError(
       'Token is missing issuing ORGiD',
       403
     );
@@ -82,7 +82,7 @@ const verifyToken = async token => {
 
   // didDocument should be resolved
   if (!checks.DID_DOCUMENT.passed) {
-    throw createError(
+    throw new BotError(
       checks.DID_DOCUMENT.errors.join('; '),
       403
     );
@@ -90,7 +90,7 @@ const verifyToken = async token => {
 
   // Organization should not be disabled
   if (!didResult.organization.isActive) {
-    throw createError(
+    throw new BotError(
       `Organization: ${didResult.organization.orgId} is disabled`,
       403
     );
@@ -125,7 +125,7 @@ const verifyToken = async token => {
       )
     ].includes(signingAddress)
   ) {
-    throw createError(
+    throw new BotError(
       'Token is signed by unknown key',
       403
     );
@@ -162,7 +162,7 @@ module.exports.resolveOrgId = async orgId => {
 
   // didDocument should be resolved
   if (!checks.DID_DOCUMENT.passed) {
-    throw createError(
+    throw new BotError(
       checks.DID_DOCUMENT.errors.join('; '),
       403
     );
@@ -170,7 +170,7 @@ module.exports.resolveOrgId = async orgId => {
 
   // Organization should not be disabled
   if (!didResult.organization.isActive) {
-    throw createError(
+    throw new BotError(
       `Organization: ${didResult.organization.orgId} is disabled`,
       403
     );
