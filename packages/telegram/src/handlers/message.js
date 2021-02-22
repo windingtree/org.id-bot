@@ -25,8 +25,6 @@ const orgIdsButton = orgIds => Markup.inlineKeyboard(
 const handleDirectMessages = async ctx => {
   let query = ctx.message.text;
 
-  console.log('@@@@', ctx.message);
-
   if (ctx.message.forward_from && ctx.message.forward_from !== ctx.message.chat.username) {
     query = ctx.message.forward_from.username;
   } else if (ctx.message.forward_sender_name) {
@@ -47,26 +45,33 @@ const handleDirectMessages = async ctx => {
         const { didDocument } = await resolveOrgId(verifiedTokens[0].sub.did.split(':')[2]);
         const name = getDeepValue(didDocument, 'legalEntity.legalName') ||
           getDeepValue(didDocument, 'organizationalUnit.name');
+        const website = getDeepValue(didDocument, 'legalEntity.contacts[0].website') ||
+          getDeepValue(didDocument, 'organizationalUnit.contacts[0].website');
+        let websiteNote = '';
+        if (website) {
+          websiteNote = ` which can be found at ${website}`;
+        }
         return ctx.replyWithMarkdown(
-`User *@${query}* is an official representative *${name}*.
+`User *@${query}* is an official representative *${name}*${websiteNote}.
 You can retrieve detailed ORGiD resolution report by clicking on the ORGiD button below`,
           orgIdsButton(orgIds)
         );
       } else {
         return ctx.replyWithMarkdown(
-`User *@${query}* is an official representative of the following ORGiDs.
+`User *@${query}* is associated with multiple ORGiD's.
 You can retrieve detailed ORGiD resolutions reports by clicking on the button below`,
           orgIdsButton(orgIds)
         );
       }
     } else {
-      return ctx.reply(`User @${query} does not represent any ORGiD registered company`);
+      return ctx.reply(`This person does not appear to be authorized to speak on behalf of any organization.
+This does not mean they are not a real person or a scammer just that they have authorization to speak on an organization dictated via ORGiD record`);
     }
   } else if (query && query.match(/^0x\w{64}$/)) {
     const didResult = await resolveOrgId(query);
     await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
   } else {
-    return ctx.reply(`\`${query}\` doesn't look like а social handle. It also doesn't look like an ORGiD`);
+    return ctx.reply(`Please make sure that the username is provided in the format of @username`);
   }
 };
 
