@@ -67,7 +67,7 @@ module.exports.onActionResolveOrgIdSummary = async ctx => {
     );
   } catch (error) {
     console.log('Error:', error);
-    await ctx.answerCbQuery(`Something goes wrong`);
+    await ctx.answerCbQuery('Something goes wrong');
   }
 };
 
@@ -91,6 +91,6 @@ module.exports.onActionResolveOrgId = async ctx => {
     await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
   } catch (error) {
     console.log('Error:', error);
-    await ctx.answerCbQuery(`Something goes wrong`);
+    await ctx.answerCbQuery('Something goes wrong');
   }
-}
+};

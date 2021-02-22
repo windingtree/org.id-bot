@@ -52,26 +52,27 @@ const handleDirectMessages = async ctx => {
           websiteNote = ` which can be found at ${website}`;
         }
         return ctx.replyWithMarkdown(
-`User *@${query}* is an official representative *${name}*${websiteNote}.
+          `User *@${query}* is an official representative *${name}*${websiteNote}.
 You can retrieve detailed ORGiD resolution report by clicking on the ORGiD button below`,
           orgIdsButton(orgIds)
         );
       } else {
         return ctx.replyWithMarkdown(
-`User *@${query}* is associated with multiple ORGiD's.
+          `User *@${query}* is associated with multiple ORGiD's.
 You can retrieve detailed ORGiD resolutions reports by clicking on the button below`,
           orgIdsButton(orgIds)
         );
       }
     } else {
-      return ctx.reply(`This person does not appear to be authorized to speak on behalf of any organization.
+      return ctx.reply(
+        `This person does not appear to be authorized to speak on behalf of any organization.
 This does not mean they are not a real person or a scammer just that they have authorization to speak on an organization dictated via ORGiD record`);
     }
   } else if (query && query.match(/^0x\w{64}$/)) {
     const didResult = await resolveOrgId(query);
     await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
   } else {
-    return ctx.reply(`Please make sure that the username is provided in the format of @username`);
+    return ctx.reply('Please make sure that the username is provided in the format of @username');
   }
 };
 
