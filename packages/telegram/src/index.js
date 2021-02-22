@@ -28,7 +28,7 @@ const bot = new Telegraf(
 );
 bot.use(session());
 bot.catch(error => console.error('Unhandled error:', error));
-bot.start(ctx => ctx.replyWithMarkdown(`Hi I'm the *ORGiD Bot* powered by *Winding Tree*. I am here to help you with your verification needs. Please provide a Telegram Username in the format of @username`));
+bot.start(ctx => ctx.replyWithMarkdown('Hi I\'m the *ORGiD Bot* powered by *Winding Tree*. I am here to help you with your verification needs. Please provide a Telegram Username in the format of @username'));
 bot.help(ctx => ctx.reply('Send me an ORGiD or a Telegram user profile name'));
 
 // Actions
