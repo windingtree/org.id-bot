@@ -61,7 +61,7 @@ provider:
 
 functions:
   telegram:
-    handler: packages/telegram/src/index.handler
+    handler: src/index.handler
     environment: ${file(env.yml)}
     events:
       - http:
