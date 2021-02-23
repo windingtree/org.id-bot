@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-export TESTING=true
+export TESTING=yes
 
 # Exit script as soon as a command fails.
 set -o errexit

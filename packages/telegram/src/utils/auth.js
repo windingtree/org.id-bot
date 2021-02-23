@@ -7,6 +7,7 @@ const { getAccountsByUsername } = require('./marketplaceApi');
 const { getFile } = require('./ipfs');
 const { toChecksObject } = require('../utils/object');
 const BotError = require('../utils/error');
+const { zeroAddress } = require('../utils/constants');
 
 const {
   ethereumNetwork,
@@ -17,20 +18,18 @@ const web3 = new Web3(`https://${ethereumNetwork}.infura.io/v3/${infuraKey}`);
 const orgIdAddress = addresses[ethereumNetwork];
 
 // OrgIdResolver creation helper
-const createOrgIdResolver = () => {
+const createOrgIdResolver = (web3Instance = web3, orgIdContractAddress = orgIdAddress) => {
   const resolver = new OrgIdResolver({
-    web3,
-    orgId: orgIdAddress
+    web3: web3Instance,
+    orgId: orgIdContractAddress
   });
   resolver.registerFetchMethod(httpFetchMethod);
   return resolver;
 };
 module.exports.createOrgIdResolver = createOrgIdResolver;
 
-// Verify auth token
-const verifyToken = async token => {
-  const orgIdResolver = createOrgIdResolver();
-
+// Validate auth header
+const validateAuthHeader = token => {
   // If passed headers object
   // then extract token from authorization header
   if (typeof token === 'object') {
@@ -54,6 +53,37 @@ const verifyToken = async token => {
     token = authToken;
   }
 
+  return token;
+};
+module.exports.validateAuthHeader = validateAuthHeader;
+
+// Validate DID document checks
+const validateDidDocumentChecks = didResult => {
+  const checks = toChecksObject(didResult.checks);
+
+  // didDocument should be resolved
+  if (!checks.DID_DOCUMENT.passed) {
+    throw new BotError(
+      checks.DID_DOCUMENT.errors.join('; '),
+      403
+    );
+  }
+
+  // Organization should not be disabled
+  if (!didResult.organization.isActive) {
+    throw new BotError(
+      `Organization: ${didResult.organization.orgId} is disabled`,
+      403
+    );
+  }
+};
+module.exports.validateDidDocumentChecks = validateDidDocumentChecks;
+
+// Verify auth token
+const verifyToken = async token => {
+  const orgIdResolver = createOrgIdResolver();
+
+  token = validateAuthHeader(token);
   const decodedToken = JWT.decode(token, {
     complete: true
   });
@@ -76,25 +106,21 @@ const verifyToken = async token => {
   }
 
   // Resolve did to didDocument
-  const { did } = iss.match(/(?<did>did:orgid:0x\w{64})(?:#{1})?(?<fragment>\w+)?/).groups;
-  const didResult = await orgIdResolver.resolve(did);
-  const checks = toChecksObject(didResult.checks);
+  let didResult;
 
-  // didDocument should be resolved
-  if (!checks.DID_DOCUMENT.passed) {
-    throw new BotError(
-      checks.DID_DOCUMENT.errors.join('; '),
-      403
-    );
+  /* istanbul ignore if */
+  if (process.env.TESTING !== 'yes') {
+    const { did } = iss.match(/(?<did>did:orgid:0x\w{64})(?:#{1})?(?<fragment>\w+)?/).groups;
+    didResult = await orgIdResolver.resolve(did);
   }
 
-  // Organization should not be disabled
-  if (!didResult.organization.isActive) {
-    throw new BotError(
-      `Organization: ${didResult.organization.orgId} is disabled`,
-      403
-    );
+  // Override the didResult during testing
+  /* istanbul ignore if */
+  if (process.env.TESTING === 'yes' && global.TEST_DID_RESULT) {
+    didResult = global.TEST_DID_RESULT;
   }
+
+  validateDidDocumentChecks(didResult);
 
   // Validate signature of the organization owner or director
   const lastPeriod = token.lastIndexOf('.');
@@ -118,7 +144,7 @@ const verifyToken = async token => {
   if (
     ![
       didResult.organization.owner,
-      ...(didResult.organization.director !== '0x0000000000000000000000000000000000000000'
+      ...(didResult.organization.director !== zeroAddress
         && didResult.organization.isDirectorshipAccepted
         ? [didResult.organization.director]
         : []
@@ -136,6 +162,7 @@ const verifyToken = async token => {
 module.exports.verifyToken = verifyToken;
 
 // Get verified tokens by username
+/* istanbul ignore next */
 module.exports.getVerifiedTokens = async (username) => {
   const resolvedAccounts = await getAccountsByUsername(username);
   const verifiedTokens = [];
@@ -144,9 +171,7 @@ module.exports.getVerifiedTokens = async (username) => {
     // Fetch tokens and verify accounts
     for (const account of resolvedAccounts) {
       const token = await getFile(account.ipfs);
-      console.log('Token:', token);
       const decodedToken = await verifyToken(token);
-      console.log('Decoded Token:', decodedToken);
       verifiedTokens.push(decodedToken.payload);
     }
   }
@@ -155,26 +180,10 @@ module.exports.getVerifiedTokens = async (username) => {
 };
 
 // Resolve an ORGiD
+/* istanbul ignore next */
 module.exports.resolveOrgId = async orgId => {
   const orgIdResolver = createOrgIdResolver();
   const didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
-  const checks = toChecksObject(didResult.checks);
-
-  // didDocument should be resolved
-  if (!checks.DID_DOCUMENT.passed) {
-    throw new BotError(
-      checks.DID_DOCUMENT.errors.join('; '),
-      403
-    );
-  }
-
-  // Organization should not be disabled
-  if (!didResult.organization.isActive) {
-    throw new BotError(
-      `Organization: ${didResult.organization.orgId} is disabled`,
-      403
-    );
-  }
-
+  validateDidDocumentChecks(didResult);
   return didResult;
 };

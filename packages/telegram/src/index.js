@@ -16,6 +16,8 @@ const {
 const { onMessage } = require('./handlers/message');
 // const { onInlineQuery } = require('./handlers/inlineQuery');
 
+console.log(`@@@ ${process.env.BOT_TOKEN}`)
+
 const bot = new Telegraf(
   botToken,
   webhookEnabled
