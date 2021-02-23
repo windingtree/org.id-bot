@@ -43,6 +43,7 @@
     "jose": "2.0.3",
     "ethers": "5.0.31",
     "lambda-request-handler": "0.5.1-alpha1",
+    "telegraf-aws": "1.0.0",
     "dotenv": "8.2.0"
   },
   "devDependencies": {
