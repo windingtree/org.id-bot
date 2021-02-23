@@ -39,12 +39,11 @@
     "jose": "2.0.3",
     "ethers": "5.0.31",
     "lambda-request-handler": "0.5.1-alpha1",
-    "dotenv": "8.2.0"
-  },
-  "devDependencies": {
+    "dotenv": "8.2.0",
     "eslint": "7.20.0",
     "mocha": "8.3.0",
     "chai": "4.3.0",
     "nyc": "15.1.0"
-  }
+  },
+  "devDependencies": {}
 }
