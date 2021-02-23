@@ -45,6 +45,8 @@
     "eslint": "7.20.0",
     "mocha": "8.3.0",
     "chai": "4.3.0",
-    "nyc": "15.1.0"
+    "nyc": "15.1.0",
+    "@truffle/hdwallet-provider": "1.2.2",
+    "ganache-core": "2.13.2"
   }
 }

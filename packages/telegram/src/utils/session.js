@@ -1,3 +1,6 @@
+/* istanbul ignore file */
+// This file ignored in coverage report because of this file not in usage for now
+
 // Initialize or refresh session object
 module.exports.setSession = ctx => {
   ctx.session = ctx.session || {};
