@@ -1,7 +1,8 @@
 const {
   Telegraf
 } = require('telegraf');
-const makeHandler = require('lambda-request-handler');
+// const makeHandler = require('lambda-request-handler');
+const telegrafAws = require('telegraf-aws');
 
 const {
   botToken,
@@ -48,9 +49,13 @@ process.once('SIGTERM', () => bot.stop('SIGTERM'));
 //   bot.launch();
 // }
 
-bot.telegram.setWebhook(webhookPath);
+if  (webhookEnabled) {
+  bot.telegram.setWebhook(webhookPath);
+}
 
 // AWS Lambda handler
-module.exports.handler = makeHandler(
-  bot.webhookCallback(webhookPath)
-);
+// module.exports.handler = makeHandler(
+//   bot.webhookCallback(webhookPath)
+// );
+
+module.exports.handler = telegrafAws(bot);
