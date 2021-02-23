@@ -5,7 +5,6 @@ An interactive ORGiD resolver for social networks and web
 
 ```bash
 yarn install
-yarn run bootstrap
 ```
 
 ## Configuration
@@ -21,6 +20,8 @@ MARKETPLACE_API_PATH=<MARKETPLACE_API_BASE_PATH:(eq: https://staging-api.marketp
 MARKETPLACE_IPFS=<STAGING_IPFS_SERVER_URI:(eq: https://staging-ipfs.marketplace.windingtree.com)>
 UNAUTHORIZED_USER_MESSAGES_LIMIT=5
 MESSAGES_HANDLER_MODE=direct
+WEBHOOK_ENABLED=yes
+WEBHOOK_PATH=/
 ```
 
 ## Start the Bot

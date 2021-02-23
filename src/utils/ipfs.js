@@ -7,6 +7,7 @@ const {
 const ipfsClient = IpfsHttpClient(ipfsApiPath);
 
 // Fetch file by IPFS path
+/* istanbul ignore next */
 module.exports.getFile = async path => {
   const tokenChunks = [];
   for await (const chunk of ipfsClient.cat(path)) {
