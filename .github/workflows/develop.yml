@@ -1,11 +1,11 @@
 name: Deploy Develop
-environment: develop
 on:
   push:
     branches:
       - develop
 jobs:
   deploy-develop:
+    environment: develop
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
