@@ -43,15 +43,14 @@ process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 // Start the Bot
-bot.launch();
+// bot.launch();
 // if  (!webhookEnabled) {
 //   bot.launch();
 // }
 
+bot.telegram.setWebhook(webhookPath);
+
 // AWS Lambda handler
-module.exports.handler = (...args) => {
-  console.log('@@@', JSON.stringify(args));
-  return makeHandler(
-    bot.webhookCallback(webhookPath)
-  );
-};
+module.exports.handler = makeHandler(
+  bot.webhookCallback(webhookPath)
+);
