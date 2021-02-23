@@ -1,6 +1,5 @@
 const {
-  Telegraf,
-  session
+  Telegraf
 } = require('telegraf');
 const makeHandler = require('lambda-request-handler');
 
@@ -16,8 +15,6 @@ const {
 const { onMessage } = require('./handlers/message');
 // const { onInlineQuery } = require('./handlers/inlineQuery');
 
-console.log(`@@@ ${process.env.BOT_TOKEN}`)
-
 const bot = new Telegraf(
   botToken,
   webhookEnabled
@@ -28,7 +25,7 @@ const bot = new Telegraf(
     }
     : undefined
 );
-bot.use(session());
+// bot.use(session());
 bot.catch(error => console.error('Unhandled error:', error));
 bot.start(ctx => ctx.replyWithMarkdown('Hi I\'m the *ORGiD Bot* powered by *Winding Tree*. I am here to help you with your verification needs. Please provide a Telegram Username in the format of @username'));
 bot.help(ctx => ctx.reply('Send me an ORGiD or a Telegram user profile name'));
