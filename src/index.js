@@ -43,9 +43,10 @@ process.once('SIGINT', () => bot.stop('SIGINT'));
 process.once('SIGTERM', () => bot.stop('SIGTERM'));
 
 // Start the Bot
-if  (!webhookEnabled) {
-  bot.launch();
-}
+bot.launch();
+// if  (!webhookEnabled) {
+//   bot.launch();
+// }
 
 // AWS Lambda handler
 module.exports.handler = makeHandler(
