@@ -24,6 +24,8 @@ provider:
   name: aws
   stage: develop
   runtime: nodejs12.x
+  memorySize: 2048 # optional, in MB, default is 1024
+  timeout: 90 # optional, in seconds, default is 6
   lambdaHashingVersion: 20201221
 
 # you can overwrite defaults here
