@@ -62,16 +62,7 @@ provider:
 functions:
   telegram:
     handler: packages/telegram/src/index.handler
-    environment:
-      BOT_TOKEN: ${env:BOT_TOKEN}
-      INFURA_KEY: ${env:INFURA_KEY}
-      ETHEREUM_NETWORK: ${env:ETHEREUM_NETWORK}
-      MARKETPLACE_API_PATH: ${env:MARKETPLACE_API_PATH}
-      MARKETPLACE_IPFS: ${env:MARKETPLACE_IPFS}
-      UNAUTHORIZED_USER_MESSAGES_LIMIT: ${env:UNAUTHORIZED_USER_MESSAGES_LIMIT}
-      MESSAGES_HANDLER_MODE: ${env:MESSAGES_HANDLER_MODE}
-      WEBHOOK_ENABLED: ${env:WEBHOOK_ENABLED}
-      WEBHOOK_PATH: ${env:WEBHOOK_PATH}
+    environment: ${file(env.yml)}
     events:
       - http:
           path: /
