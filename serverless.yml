@@ -64,30 +64,25 @@ functions:
     handler: packages/telegram/src/index.handler
     events:
       - http:
-        path: /
-        method: get
-        cors:
-          origin: '*'
+          path: /
+          method: get
+          cors: true
       - http:
-        path: /
-        method: post
-        cors:
-          origin: '*'
+          path: /
+          method: post
+          cors: true
       - http:
-        path: /
-        method: patch
-        cors:
-          origin: '*'
+          path: /
+          method: patch
+          cors: true
       - http:
-        path: /
-        method: put
-        cors:
-          origin: '*'
+          path: /
+          method: put
+          cors: true
       - http:
-        path: /
-        method: delete
-        cors:
-          origin: '*'
+          path: /
+          method: delete
+          cors: true
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
