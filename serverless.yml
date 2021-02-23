@@ -22,6 +22,7 @@ frameworkVersion: '2'
 
 provider:
   name: aws
+  stage: develop
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
 
