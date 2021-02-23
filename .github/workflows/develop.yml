@@ -1,4 +1,5 @@
 name: Deploy Develop
+environment: develop
 on:
   push:
     branches:
