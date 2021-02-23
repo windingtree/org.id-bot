@@ -3,8 +3,13 @@
   "version": "0.1.0",
   "description": "Monorepo of an interactive ORGiD resolver for social networks and web",
   "private": true,
+  "main": "src/index.js",
   "scripts": {
-    "bootstrap": "npx lerna bootstrap"
+    "start": "node src/index.js",
+    "lint": "npx eslint src test",
+    "test": "scripts/test.sh",
+    "test:coverage": "COVERAGE=true scripts/test.sh",
+    "test:coverage:ci": "COVERAGE=true CONTINUOUS_INTEGRATION=true scripts/test.sh"
   },
   "repository": {
     "type": "git",
@@ -38,19 +43,14 @@
     "jose": "2.0.3",
     "ethers": "5.0.31",
     "lambda-request-handler": "0.5.1-alpha1",
-    "dotenv": "8.2.0",
+    "dotenv": "8.2.0"
+  },
+  "devDependencies": {
+    "yarn": "1.22.10",
     "eslint": "7.20.0",
     "mocha": "8.3.0",
     "chai": "4.3.0",
     "nyc": "15.1.0",
-
-    "lerna": "^3.22.1",
-    "yarn": "1.22.10"
-  },
-  "devDependencies": {},
-  "workspaces": {
-    "packages": [
-      "packages/*"
-    ]
+    "serverless": "2.25.2"
   }
 }
