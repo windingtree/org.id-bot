@@ -16,6 +16,8 @@ const {
 
 const web3 = new Web3(`https://${ethereumNetwork}.infura.io/v3/${infuraKey}`);
 const orgIdAddress = addresses[ethereumNetwork.replace('mainnet', 'main')];
+console.log('ethereumNetwork:', ethereumNetwork);
+console.log('OrgId address:', orgIdAddress);
 
 // OrgIdResolver creation helper
 const createOrgIdResolver = (web3Instance = web3, orgIdContractAddress = orgIdAddress) => {
