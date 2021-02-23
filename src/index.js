@@ -49,6 +49,9 @@ bot.launch();
 // }
 
 // AWS Lambda handler
-module.exports.handler = makeHandler(
-  bot.webhookCallback(webhookPath)
-);
+module.exports.handler = (...args) => {
+  console.log('@@@', JSON.stringify(args));
+  return makeHandler(
+    bot.webhookCallback(webhookPath)
+  );
+};
