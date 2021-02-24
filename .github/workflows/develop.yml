@@ -1,8 +1,10 @@
 name: Deploy Develop
 on:
   push:
+    branches:
+      - develop
     tags:
-      - v*.*
+      - v*
 jobs:
   deploy-develop:
     if: github.event.base_ref == 'refs/heads/develop'
