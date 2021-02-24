@@ -1,12 +1,11 @@
 name: Deploy Develop
 on:
   push:
-    branches:
-      - develop
     tags:
       - v*.*
 jobs:
   deploy-develop:
+    if: github.event.base_ref == 'refs/heads/develop'
     environment: develop
     runs-on: ubuntu-latest
     steps:
