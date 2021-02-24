@@ -52,7 +52,7 @@ const handleDirectMessages = async ctx => {
           websiteNote = ` which can be found at ${website}`;
         }
         return ctx.replyWithMarkdown(
-          `User *@${query}* is an official representative *${name}*${websiteNote}.
+          `User *@${query}* is an official representative of *${name}*${websiteNote}.
 You can retrieve detailed ORGiD resolution report by clicking on the ORGiD button below`,
           orgIdsButton(orgIds)
         );
@@ -66,7 +66,7 @@ You can retrieve detailed ORGiD resolutions reports by clicking on the button be
     } else {
       return ctx.reply(
         `This person does not appear to be authorized to speak on behalf of any organization.
-This does not mean they are not a real person or a scammer just that they have authorization to speak on an organization dictated via ORGiD record`);
+This does not mean they are not a real person or a scammer, just that they don't have authorization to speak on behalf of an organization dictated via an ORGiD record`);
     }
   } else if (query && query.match(/^0x\w{64}$/)) {
     const didResult = await resolveOrgId(query);
