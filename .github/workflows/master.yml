@@ -3,8 +3,11 @@ on:
   push:
     branches:
       - master
+    tags:
+      - v*
 jobs:
   deploy-master:
+    if: github.event.base_ref == 'refs/heads/master'
     environment: master
     runs-on: ubuntu-latest
     steps:
