@@ -1,12 +1,12 @@
 name: Deploy Develop
 on:
   push:
-    branches:
-      - develop
+    tags:
+      - v*.*
 jobs:
   deploy-develop:
+    if: github.event.base_ref == 'refs/heads/develop'
     environment: develop
-    if: ${{ secrets.AWS_KEY }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
