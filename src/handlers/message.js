@@ -31,8 +31,8 @@ const handleDirectMessages = async ctx => {
     query = ctx.message.forward_sender_name;
   }
 
-  if (query && query.match(/^[@]*[a-zA-Z._-]+$/)) {
-    query = query.match(/^[@]*([a-zA-Z._-]+)$/)[1];
+  if (query && query.match(/^[@]*[a-zA-Z0-9._-]+$/)) {
+    query = query.match(/^[@]*([a-zA-Z0-9._-]+)$/)[1];
     const verifiedTokens = await getVerifiedTokens(query);
 
     if (verifiedTokens.length > 0) {
