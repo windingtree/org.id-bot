@@ -123,8 +123,8 @@ const parseTrustAssertions = didResult => {
   const other = trustAssertions.reduce(
     (a, v) => {
       if (v.type !== 'domain' && v.type !== 'dns') {
-        const notVerified = errors.filter(e => (e.type === 'domain' && e.claim === v.claim))[0];
-        a.push(`${notVerified ? '⚠' : '✅'} Website — ${v.claim}${notVerified ? ' — not verified yet' : ''}`);
+        const notVerified = errors.filter(e => ((v.type !== 'domain' && v.type !== 'dns') && e.claim === v.claim))[0];
+        a.push(`${notVerified ? '⚠' : '✅'} ${v.type.charAt(0).toUpperCase()+v.type.slice(1)} — ${v.claim}${notVerified ? ' — not verified yet' : ''}`);
       }
       return a;
     },
