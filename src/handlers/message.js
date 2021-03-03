@@ -1,26 +1,21 @@
-const { Markup } = require('telegraf');
 const { getVerifiedTokens } = require('../utils/auth');
 const {
   setSession,
   addVerifiedUserToSession
 } = require('../utils/session');
-const { resolveOrgId } = require('../utils/auth');
+const {
+  resolveOrgId,
+} = require('../utils/auth');
 const { replayWithSplit } = require('../utils/message');
-const { getDeepValue } = require('../utils/object');
+const {
+  orgIdsButton,
+  orgIdReport
+} = require('./actionResolveOrgId');
 
 const {
   unauthorizedUserMessagesLimit,
   messagesHandlerMode
 } = require('../config');
-
-const orgIdsButton = orgIds => Markup.inlineKeyboard(
-  orgIds.map(
-    (orgId, index) => Markup.button.callback(
-      orgId,
-      `resolveOrgIdSummary:${index}`
-    )
-  )
-);
 
 const handleDirectMessages = async ctx => {
   let query = ctx.message.text;
@@ -31,46 +26,39 @@ const handleDirectMessages = async ctx => {
     query = ctx.message.forward_sender_name;
   }
 
-  if (query && query.match(/^[@]*[a-zA-Z0-9._-]+$/)) {
+  if (query && query.match(/^0x\w{64}$/)) {
+    const didResult = await resolveOrgId(query);
+    await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
+  } else if (query && query.match(/^[@]*[a-zA-Z0-9._-]+$/)) {
     query = query.match(/^[@]*([a-zA-Z0-9._-]+)$/)[1];
     const verifiedTokens = await getVerifiedTokens(query);
 
     if (verifiedTokens.length > 0) {
-      const orgIds = [];
-      for (const verifiedToken of verifiedTokens) {
-        orgIds.push(verifiedToken.sub.did.split(':')[2]);
-      }
-
+      // Single match
       if (verifiedTokens.length === 1) {
-        const { didDocument } = await resolveOrgId(verifiedTokens[0].sub.did.split(':')[2]);
-        const name = getDeepValue(didDocument, 'legalEntity.legalName') ||
-          getDeepValue(didDocument, 'organizationalUnit.name');
-        const website = getDeepValue(didDocument, 'legalEntity.contacts[0].website') ||
-          getDeepValue(didDocument, 'organizationalUnit.contacts[0].website');
-        let websiteNote = '';
-        if (website) {
-          websiteNote = ` which can be found at ${website}`;
-        }
-        return ctx.replyWithMarkdown(
-          `User *@${query}* is an official representative of *${name}*${websiteNote}.
-You can retrieve detailed ORGiD resolution report by clicking on the ORGiD button below`,
-          orgIdsButton(orgIds)
-        );
+        const didResult = await resolveOrgId(verifiedTokens[0].sub.did.split(':')[2]);
+        return orgIdReport(ctx, didResult, query);
       } else {
+      // Multiple matches
+        const didResults = await Promise.all(verifiedTokens.map(
+          token => resolveOrgId(token.sub.did.split(':')[2])
+        ));
         return ctx.replyWithMarkdown(
-          `User *@${query}* is associated with multiple ORGiD's.
-You can retrieve detailed ORGiD resolutions reports by clicking on the button below`,
-          orgIdsButton(orgIds)
+          `User *@${query}* is mentioned in several ORGiD records.
+Click the buttons below to see resolution for each ORGiD record`,
+          orgIdsButton(didResults, 'previewOrgId')
         );
       }
     } else {
       return ctx.reply(
-        `This person does not appear to be authorized to speak on behalf of any organization.
-This does not mean they are not a real person or a scammer, just that they don't have authorization to speak on behalf of an organization dictated via an ORGiD record`);
+        `This Telegram user isn’t mentioned in any of the ORGiD records.
+
+This might mean that the user has nothing to do with ORGiD verification at all, so you can only believe this user and not trust.
+
+If the user claims he or she represents Winding Tree, then you should not trust this user because this Telegram handle isn’t mentioned in the Winding Tree ORGiD record.
+
+Try sending me @TheoCrypt to check how it works with a legit Winding Tree representative`);
     }
-  } else if (query && query.match(/^0x\w{64}$/)) {
-    const didResult = await resolveOrgId(query);
-    await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
   } else {
     return ctx.reply('Please make sure that the username is provided in the format of @username');
   }

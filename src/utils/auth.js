@@ -1,5 +1,10 @@
+const moment = require('moment');
 const { OrgIdResolver, httpFetchMethod } = require('@windingtree/org.id-resolver');
-const { addresses } = require('@windingtree/org.id');
+const {
+  addresses,
+  OrgIdContract
+} = require('@windingtree/org.id');
+const { addresses: addressesStake } = require('@windingtree/org.id-lif-deposit');
 const { JWT } = require('jose');
 const ethers = require('ethers');
 const Web3 = require('web3');
@@ -16,12 +21,31 @@ const {
 
 const web3 = new Web3(`https://${ethereumNetwork}.infura.io/v3/${infuraKey}`);
 const orgIdAddress = addresses[ethereumNetwork.replace('mainnet', 'main')];
+const lifStakeAddress = addressesStake[ethereumNetwork.replace('mainnet', 'main')];
+
+// Fetch ORGiD creation date
+const fetchOrgIdCreationDate = async orgId => {
+  const contract = new web3.eth.Contract(OrgIdContract.abi, orgIdAddress);
+  const event = await contract.getPastEvents('OrganizationCreated', {
+    filter: {
+      orgId
+    },
+    fromBlock: 0,
+    toBlock: 'latest'
+  });
+  if (event.length === 1) {
+    const block = await web3.eth.getBlock(event[0].blockNumber);
+    return moment(new Date(block.timestamp * 1000)).format('DD MMMM YYYY');
+  }
+};
+module.exports.fetchOrgIdCreationDate = fetchOrgIdCreationDate;
 
 // OrgIdResolver creation helper
 const createOrgIdResolver = (web3Instance = web3, orgIdContractAddress = orgIdAddress) => {
   const resolver = new OrgIdResolver({
     web3: web3Instance,
-    orgId: orgIdContractAddress
+    orgId: orgIdContractAddress,
+    lifDeposit: lifStakeAddress
   });
   resolver.registerFetchMethod(httpFetchMethod);
   return resolver;
