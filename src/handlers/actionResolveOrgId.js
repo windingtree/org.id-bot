@@ -98,6 +98,15 @@ const orgIdsButton = (didResults, action = 'resolveOrgId') => Markup.inlineKeybo
 );
 module.exports.orgIdsButton = orgIdsButton;
 
+const extractHostname = url => {
+  try {
+    return (new URL(url).hostname).replace('www.', '');
+  } catch(error) {
+    console.error(error);
+    return url;
+  }
+};
+
 const parseTrustAssertions = didResult => {
   const trustAssertions = getDeepValue(didResult.didDocument, 'trust.assertions');
   const checks = toChecksObject(didResult.checks);
@@ -114,7 +123,7 @@ const parseTrustAssertions = didResult => {
     (a, v) => {
       if (v.type === 'domain') {
         const notVerified = errors.filter(e => (e.type === 'domain' && e.claim === v.claim))[0];
-        a.push(`${notVerified ? '⚠' : '✅'} Website — ${v.claim}${notVerified ? ' — not verified yet' : ''}`);
+        a.push(`${notVerified ? '⚠' : '✅'} Website — [${extractHostname(v.proof)}](${v.proof})${notVerified ? ' — not verified yet' : ''}`);
       }
       return a;
     },
@@ -124,7 +133,7 @@ const parseTrustAssertions = didResult => {
     (a, v) => {
       if (v.type !== 'domain' && v.type !== 'dns') {
         const notVerified = errors.filter(e => ((v.type !== 'domain' && v.type !== 'dns') && e.claim === v.claim))[0];
-        a.push(`${notVerified ? '⚠' : '✅'} ${v.type.charAt(0).toUpperCase()+v.type.slice(1)} — ${v.claim}${notVerified ? ' — not verified yet' : ''}`);
+        a.push(`${notVerified ? '⚠' : '✅'} ${v.type.charAt(0).toUpperCase()+v.type.slice(1)} — [${extractHostname(v.proof)}](${v.proof})${notVerified ? ' — not verified yet' : ''}`);
       }
       return a;
     },
