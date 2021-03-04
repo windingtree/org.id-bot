@@ -45,19 +45,16 @@ const handleDirectMessages = async ctx => {
         ));
         return ctx.replyWithMarkdown(
           `User *@${query}* is mentioned in several ORGiD records.
+
 Click the buttons below to see resolution for each ORGiD record`,
-          orgIdsButton(didResults, 'previewOrgId')
+          orgIdsButton(didResults, 'previewOrgId', true)
         );
       }
     } else {
       return ctx.reply(
         `This Telegram user isn’t mentioned in any of the ORGiD records.
 
-This might mean that the user has nothing to do with ORGiD verification at all, so you can only believe this user and not trust.
-
-If the user claims he or she represents Winding Tree, then you should not trust this user because this Telegram handle isn’t mentioned in the Winding Tree ORGiD record.
-
-Try sending me @TheoCrypt to check how it works with a legit Winding Tree representative`);
+If the user claims he or she represents an Organization, and you know that given Organization has an ORGiD, then it’s a concern`);
     }
   } else {
     return ctx.reply('Please make sure that the username is provided in the format of @username');
