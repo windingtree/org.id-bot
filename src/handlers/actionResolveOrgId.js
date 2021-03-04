@@ -1,12 +1,13 @@
 const { Markup } = require('telegraf');
 const {
   resolveOrgId,
-  fetchOrgIdCreationDate
+  fetchOrgIdCreationDate,
+  fetchLifDepositCreationDate,
+  web3
 } = require('../utils/auth');
 const { replayWithSplit } = require('../utils/message');
 const {
-  getDeepValue,
-  toChecksObject
+  getDeepValue
 } = require('../utils/object');
 
 // const orgIdButton = orgId => Markup.inlineKeyboard(
@@ -112,7 +113,6 @@ const extractHostname = url => {
 
 const parseTrustAssertions = didResult => {
   const trustAssertions = getDeepValue(didResult, 'trust.assertions');
-  const checks = toChecksObject(didResult.checks);
   const websites = trustAssertions.reduce(
     (a, v) => {
       if (v.type === 'domain') {
@@ -134,11 +134,9 @@ const parseTrustAssertions = didResult => {
     },
     []
   );
-  const lifStake = Number(getDeepValue(checks, 'lifDeposit.deposit'));
 
   return `${websites.length > 0 ? websites.join('\n') : ''}
-${other.length > 0 ? other.join('\n') : ''}
-${!isNaN(lifStake) && lifStake > 0 ? '✅ LÍF stake — '+lifStake+'LÍF' : '❌ LÍF stake — not staked'}`.trim();
+${other.length > 0 ? other.join('\n') : ''}`.trim();
 };
 module.exports.parseTrustAssertions = parseTrustAssertions;
 
@@ -146,8 +144,19 @@ module.exports.parseTrustAssertions = parseTrustAssertions;
 const orgIdReport = async (ctx, didResult, query) => {
   const name = getDeepValue(didResult.didDocument, 'legalEntity.legalName') ||
     getDeepValue(didResult.didDocument, 'organizationalUnit.name');
+
   const evidence = parseTrustAssertions(didResult);
   const orgIdCreationDate = await fetchOrgIdCreationDate(didResult.id);
+
+  const lifStakeWei = getDeepValue(didResult, 'lifDeposit.deposit');
+  const lifStakeWithdrawalRequest = getDeepValue(didResult, 'lifDeposit.withdrawalRequest');
+  const lifStake = web3.utils.fromWei(lifStakeWei);
+  const isLifStakeOk = lifStake !== '0';
+  let lifStakeDate = false;
+  if (isLifStakeOk) {
+    lifStakeDate = await fetchLifDepositCreationDate(didResult.id);
+  }
+
   return ctx.replyWithMarkdown(
     `${query ? 'User *@'+query+'* is mentioned in the following ORGiD:\n' : ''}
 *ORGANIZATION NAME*
@@ -158,6 +167,8 @@ ${name}
 
 ${evidence ? evidence : '❌ No evidence provided'}
 
+${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}
+${lifStakeWithdrawalRequest !== null ? '⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
 ✅ *ORGiD* ${orgIdCreationDate ? '— created on '+orgIdCreationDate : ''}
 ${didResult.id}
 
