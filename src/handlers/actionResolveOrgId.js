@@ -111,7 +111,7 @@ const extractHostname = url => {
 };
 
 const parseTrustAssertions = didResult => {
-  const trustAssertions = getDeepValue(didResult.didDocument, 'trust.assertions');
+  const trustAssertions = getDeepValue(didResult, 'trust.assertions');
   const checks = toChecksObject(didResult.checks);
   const websites = trustAssertions.reduce(
     (a, v) => {
