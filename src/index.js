@@ -30,7 +30,9 @@ const bot = new Telegraf(
 
 bot.catch(error => console.error('Unhandled error:', error));
 bot.start(ctx => ctx.replyWithMarkdown(
-  'Hi I\'m the *ORGiD Bot* powered by *Winding Tree*. I am here to help you with your verification needs. Please provide a Telegram Username in the format of @username',
+  `Hi I'm the *ORGiD Bot* powered by *Winding Tree*. I can help you with verifying people on Telegram using ORGiD technology.
+
+Try sending me @TheoCrypt to see how it works`,
   Markup.inlineKeyboard([
     Markup.button.callback('How it works', '/info'),
     Markup.button.callback('How to use', '/help')
@@ -40,7 +42,7 @@ bot.command('info', handleInfoCommand);
 bot.help(handleHelpCommand);
 
 // Actions
-bot.action('previewOrgId', onActionPreviewOrgId);
+bot.action(/^previewOrgId:\d+$/, onActionPreviewOrgId);
 bot.action('resolveOrgId', onActionResolveOrgId);
 bot.action('/info', handleInfoCommand);
 bot.action('/help', handleHelpCommand);

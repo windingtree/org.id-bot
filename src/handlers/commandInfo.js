@@ -1,10 +1,10 @@
 // Command `/info` handler
 module.exports = ctx => ctx.replyWithMarkdown(`
-Primarily, I can search decentralized cryptographically powered network for evidence about an internet user and help you with finding out can you trust that user or not
+I can help you verify users in a decentralized way using verifiable claims
 
 The mechanics are simple:
 
-1. Organizations create their digital identity records — ORGiD and store them in the decentralized web
+1. Organizations create their digital identity records — *ORGiD* and store them in the decentralized web
 
 2. There they write information about which telegram users are legit representatives ot this organization
 
