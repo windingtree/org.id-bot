@@ -126,7 +126,12 @@ const parseTrustAssertions = didResult => {
   );
   const other = trustAssertions.reduce(
     (a, v) => {
-      if (v.type === 'social') {
+      if (
+        v.type === 'social' &&
+        !v.claim.match(/facebook/gi) &&
+        !v.claim.match(/twitter/gi) &&
+        !v.claim.match(/instagram/gi)
+      ) {
         const socialVerified = v.verified;
         a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified yet' : ''}`);
       }
