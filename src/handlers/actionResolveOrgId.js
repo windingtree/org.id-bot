@@ -175,7 +175,7 @@ ${evidence ? evidence : '❌ No evidence provided'}
 ${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}
 ${lifStakeWithdrawalRequest !== null ? '⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
 ✅ *ORGiD* ${orgIdCreationDate ? '— created on '+orgIdCreationDate : ''}
-${didResult.id}
+[${didResult.id}](https://marketplace.windingtree.com/organization/${didResult.id})
 
 ⚠ Beware of fake organizations, stolen identity attempts, and phishing. Double-check website spelling, social URL’s etc ⚠`,
     {
