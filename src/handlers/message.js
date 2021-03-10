@@ -28,7 +28,8 @@ const handleDirectMessages = async ctx => {
 
   if (query && query.match(/^0x\w{64}$/)) {
     const didResult = await resolveOrgId(query);
-    await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
+    // return await replayWithSplit(ctx, JSON.stringify(didResult, null, 2));
+    return orgIdReport(ctx, didResult);
   } else if (query && query.match(/^[@]*[a-zA-Z0-9._-]+$/)) {
     query = query.match(/^[@]*([a-zA-Z0-9._-]+)$/)[1];
     const verifiedTokens = await getVerifiedTokens(query);

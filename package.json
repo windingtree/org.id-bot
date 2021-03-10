@@ -1,6 +1,6 @@
 {
   "name": "@windingtree/org.id-bot",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Monorepo of an interactive ORGiD resolver for social networks and web",
   "private": true,
   "main": "src/index.js",
