@@ -8,7 +8,7 @@ However, if the username you sent is not connected with an ORGiD, you will recei
 
 This helps you weed out the scammers and keeps you talking with real people.
 
-[Here is a step-by-step guide](https://marketplace.windingtree.com/) about how to set up your very own ORGiD.`
+[Here is a step-by-step guide](https://blog.windingtree.com/setting-up-an-orgid-in-the-winding-tree-ddcfa086cfb5) about how to set up your very own ORGiD.`
 
 // Command `/info` handler
 module.exports = ctx => ctx.replyWithMarkdown(botInfoText);
