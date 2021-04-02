@@ -33,7 +33,7 @@ I am the one and only ORGiD Bot created by Winding Tree.
 
 The world of cryptocurrency is rife with scammers and phishing attempts. My job is to help you verify people on Telegram using blockchain technology so that you can do business with confidence in a digital world.
 
-Try asking me @TheoCrypt for an example.`
+Try asking me \`@TheoCrypt\` for an example.`
 
 bot.catch(error => console.error('Unhandled error:', error));
 bot.start(ctx => ctx.replyWithMarkdown(
