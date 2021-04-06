@@ -54,7 +54,7 @@ Click the buttons below to see report for each ORGiD.`,
       return ctx.reply(
         `${query}
 
-This Telegram user is not connected with an ORGiD record
+This Telegram user is not connected with an ORGiD record.
 
 ⚠ Beware of fake organizations and copied identities. ⚠`);
     }
