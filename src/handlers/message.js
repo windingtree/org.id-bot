@@ -46,7 +46,7 @@ const handleDirectMessages = async ctx => {
         return ctx.replyWithMarkdown(
           `This Telegram user is connected with several ORGiD's.
 
-Click the buttons below to see report for each ORGiD`,
+Click the buttons below to see report for each ORGiD.`,
           orgIdsButton(didResults, 'previewOrgId', true)
         );
       }
@@ -56,7 +56,7 @@ Click the buttons below to see report for each ORGiD`,
 
 This Telegram user is not connected with an ORGiD record
 
-⚠ Beware of fake organizations and copied identities ⚠`);
+⚠ Beware of fake organizations and copied identities. ⚠`);
     }
   } else {
     return ctx.reply('Please make sure that the username is provided in the format of @username');
