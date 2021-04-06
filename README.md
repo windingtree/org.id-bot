@@ -29,3 +29,7 @@ WEBHOOK_PATH=/
 ```bash
 yarn start
 ```
+
+## License
+
+This project is licensed under GPL v3. See [LICENSE](./LICENSE) for more details.

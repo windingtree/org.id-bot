@@ -6,6 +6,7 @@ const {
   web3
 } = require('../utils/auth');
 const { replayWithSplit } = require('../utils/message');
+const { withEllipsis } = require('../utils/string');
 const {
   getDeepValue
 } = require('../utils/object');
@@ -86,7 +87,7 @@ const resolveOrgIdFlow = async (ctx, orgId) => {
   await ctx.reply(`A raw ORGiD ${orgId} resolution report:`);
   await replayWithSplit(
     ctx,
-    JSON.stringify(didResult, null, 2)
+    `${JSON.stringify(didResult, null, 2)}\n\nSee technical documentation for ORGiD standard at developers.windingtree.com`
   );
 };
 
@@ -119,7 +120,7 @@ const parseTrustAssertions = didResult => {
       if (v.type === 'domain') {
         const dnsVerified = trustAssertions.filter(t => t.type === 'dns' && t.claim === v.claim && t.verified)[0];
         const domainVerified = dnsVerified || v.verified;
-        a.push(`${domainVerified ? '✅' : '⚠'} Website — ${extractHostname(v.proof)}${!domainVerified ? ' — not verified yet' : ''}`);
+        a.push(`${domainVerified ? '✅' : '⚠'} ${extractHostname(v.proof)}${!domainVerified ? ' — not verified' : ''}`);
       }
       return a;
     },
@@ -134,7 +135,7 @@ const parseTrustAssertions = didResult => {
         !v.claim.match(/instagram/gi)
       ) {
         const socialVerified = v.verified;
-        a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified yet' : ''}`);
+        a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified' : ''}`);
       }
       return a;
     },
@@ -152,7 +153,10 @@ const orgIdReport = async (ctx, didResult, query) => {
     getDeepValue(didResult.didDocument, 'organizationalUnit.name');
 
   const evidence = parseTrustAssertions(didResult);
-  const orgIdCreationDate = await fetchOrgIdCreationDate(didResult.id);
+  const {
+    orgIdCreationDate,
+    isFresh
+  } = await fetchOrgIdCreationDate(didResult.id);
 
   const lifStakeWei = getDeepValue(didResult, 'lifDeposit.deposit');
   const lifStakeWithdrawalRequest = getDeepValue(didResult, 'lifDeposit.withdrawalRequest');
@@ -164,7 +168,7 @@ const orgIdReport = async (ctx, didResult, query) => {
   }
 
   return ctx.replyWithMarkdown(
-    `${query ? 'User *@'+query+'* is mentioned in the following ORGiD:\n' : ''}
+    `${query ? 'User *@'+query+'* is connected with following ORGiD:\n' : ''}
 *ORGANIZATION NAME*
 
 ${name}
@@ -172,13 +176,11 @@ ${name}
 *EVIDENCE*
 
 ${evidence ? evidence : '❌ No evidence provided'}
+${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}${lifStakeWithdrawalRequest !== null ? '\n⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
+✅ *ORGiD* ${orgIdCreationDate ? '— created on '+orgIdCreationDate : ''} — [${withEllipsis(didResult.id, 10)}](https://${ethereumNetwork === 'ropsten' ? 'staging.' : ''}marketplace.windingtree.com/organization/${didResult.id})
 
-${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}
-${lifStakeWithdrawalRequest !== null ? '⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
-✅ *ORGiD* ${orgIdCreationDate ? '— created on '+orgIdCreationDate : ''}
-[${didResult.id}](https://${ethereumNetwork === 'ropsten' ? 'staging.' : ''}marketplace.windingtree.com/organization/${didResult.id})
-
-⚠ Beware of fake organizations, stolen identity attempts, and phishing. Double-check website spelling, social URL’s etc ⚠`,
+⚠ Double check each link to verify authenticity ⚠
+${isFresh ? '⚠ ORGiD registered only 1 day ago ⚠' : ''}`,
     {
       disable_web_page_preview: true,
       ...orgIdsButton([

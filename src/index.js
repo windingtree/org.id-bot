@@ -10,11 +10,11 @@ const {
   webhookPath
 } = require('./config');
 const handleInfoCommand = require('./handlers/commandInfo');
-const handleHelpCommand = require('./handlers/commandHelp');
 const {
   onActionPreviewOrgId,
   onActionResolveOrgId
 } = require('./handlers/actionResolveOrgId');
+const { onInlineQuery } = require('./handlers/inlineQuery');
 const { onMessage } = require('./handlers/message');
 
 const bot = new Telegraf(
@@ -28,27 +28,35 @@ const bot = new Telegraf(
     : undefined
 );
 
+const botIntroText = `Hi there!
+
+I am the one and only ORGiD Bot created by Winding Tree.
+
+The world of cryptocurrency is rife with scammers and phishing attempts. My job is to help you verify people on Telegram using blockchain technology so that you can do business with confidence in a digital world.
+
+Try asking me @praawt for an example.`;
+
 bot.catch(error => console.error('Unhandled error:', error));
 bot.start(ctx => ctx.replyWithMarkdown(
-  `Hi I'm the *ORGiD Bot* powered by *Winding Tree*. I can help you with verifying people on Telegram using ORGiD technology.
-
-Try sending me @TheoCrypt to see how it works`,
+  botIntroText,
   Markup.inlineKeyboard([
     Markup.button.callback('How it works', '/info'),
-    Markup.button.callback('How to use', '/help')
   ])
 ));
 bot.command('info', handleInfoCommand);
-bot.help(handleHelpCommand);
+bot.help(handleInfoCommand);
 
 // Actions
 bot.action(/^previewOrgId:\d+$/, onActionPreviewOrgId);
 bot.action('resolveOrgId', onActionResolveOrgId);
 bot.action('/info', handleInfoCommand);
-bot.action('/help', handleHelpCommand);
+bot.action('/help', handleInfoCommand);
 
 // Events handlers
 bot.on('message', onMessage);
+
+// Inline queries handler
+bot.on('inline_query', onInlineQuery);
 
 // Enable graceful stop
 process.once('SIGINT', () => bot.stop('SIGINT'));
