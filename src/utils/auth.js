@@ -38,10 +38,18 @@ const fetchOrgIdCreationDate = async orgId => {
     fromBlock: 0,
     toBlock: 'latest'
   });
+  let orgIdCreationDate;
+  let isFresh;
   if (event.length === 1) {
     const block = await web3.eth.getBlock(event[0].blockNumber);
-    return moment(new Date(block.timestamp * 1000)).format('DD MMMM YYYY');
+    const creationDate = moment(new Date(block.timestamp * 1000));
+    orgIdCreationDate = creationDate.format('DD MMMM YYYY');
+    isFresh = moment(new Date()).diff(creationDate, 'days') === 1;
   }
+  return {
+    orgIdCreationDate,
+    isFresh
+  };
 };
 module.exports.fetchOrgIdCreationDate = fetchOrgIdCreationDate;
 
@@ -231,6 +239,7 @@ module.exports.getVerifiedTokens = async (username) => {
 module.exports.resolveOrgId = async orgId => {
   const orgIdResolver = createOrgIdResolver();
   const didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
+  // console.log('DID_Result', JSON.stringify(didResult, null, 2));
   validateDidDocumentChecks(didResult);
   return didResult;
 };

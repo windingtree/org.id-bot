@@ -6,7 +6,6 @@ const {
 const {
   resolveOrgId,
 } = require('../utils/auth');
-const { replayWithSplit } = require('../utils/message');
 const {
   orgIdsButton,
   orgIdReport
@@ -45,17 +44,19 @@ const handleDirectMessages = async ctx => {
           token => resolveOrgId(token.sub.did.split(':')[2])
         ));
         return ctx.replyWithMarkdown(
-          `User *@${query}* is mentioned in several ORGiD records.
+          `This Telegram user is connected with several ORGiD's.
 
-Click the buttons below to see resolution for each ORGiD record`,
+Click the buttons below to see report for each ORGiD`,
           orgIdsButton(didResults, 'previewOrgId', true)
         );
       }
     } else {
       return ctx.reply(
-        `This Telegram user isn’t mentioned in any of the ORGiD records.
+        `${query}
 
-If the user claims he or she represents an Organization, and you know that given Organization has an ORGiD, then it’s a concern`);
+This Telegram user is not connected with an ORGiD record
+
+⚠ Beware of fake organizations and copied identities ⚠`);
     }
   } else {
     return ctx.reply('Please make sure that the username is provided in the format of @username');
