@@ -3,7 +3,34 @@ const redis = require('redis');
 const config = require('../../config');
 
 // Creation of the Redis client
-let redisClient = redis.createClient(config.redisUrl);
+let redisClient = redis.createClient({
+  host: config.redisHost,
+  port: config.redisPort,
+  password: config.redisPassword,
+
+  retry_strategy: function(options) {
+    if (options.error && options.error.code === "ECONNREFUSED") {
+      // End reconnecting on a specific error and flush all commands with
+      // a individual error
+      console.log('The server refused the connection');
+      return new Error('The server refused the connection');
+    }
+    if (options.total_retry_time > 1000 * 25 * 10) {
+      // End reconnecting after a specific timeout and flush all commands
+      // with a individual error
+      console.log('Retry time exhausted');
+      return new Error('Retry time exhausted');
+    }
+    if (options.attempt > 10) {
+      console.log('Attempt more than 10 times.');
+      // End reconnecting with built in error
+      return undefined;
+    }
+    // reconnect after
+    console.log('We will try to reconnect in 1.5 seconds.');
+    return Math.min(options.attempt * 100, 1500);
+  },
+});
 
 // Asynchronous version of get
 redisClient.asyncGet = key => new Promise(
