@@ -17,12 +17,7 @@ functions:
       securityGroupIds:
         - sg-03c2c9512ce833b4e
       subnetIds:
-        - subnet-cefc20f0
         - subnet-01d85066
-        - subnet-ca510980
-        - subnet-c8ed7894
-        - subnet-4e276541
-        - subnet-6cf06742
     events:
       - http:
           path: /
