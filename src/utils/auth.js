@@ -16,10 +16,16 @@ const { getFile } = require('./ipfs');
 const { toChecksObject } = require('../utils/object');
 const BotError = require('../utils/error');
 const { zeroAddress } = require('../utils/constants');
+const {
+  getCache,
+  setCache
+} = require('../utils/cache');
 
 const {
   ethereumNetwork,
-  infuraKey
+  infuraKey,
+  orgIdCacheExpiration,
+  usernameCacheExpiration
 } = require('../config');
 
 const web3 = new Web3(`https://${ethereumNetwork}.infura.io/v3/${infuraKey}`);
@@ -44,7 +50,7 @@ const fetchOrgIdCreationDate = async orgId => {
     const block = await web3.eth.getBlock(event[0].blockNumber);
     const creationDate = moment(new Date(block.timestamp * 1000));
     orgIdCreationDate = creationDate.format('DD MMMM YYYY');
-    isFresh = moment(new Date()).diff(creationDate, 'days') === 1;
+    isFresh = moment(new Date()).diff(creationDate, 'days') <= 1;
   }
   return {
     orgIdCreationDate,
@@ -219,9 +225,12 @@ module.exports.verifyToken = verifyToken;
 // Get verified tokens by username
 /* istanbul ignore next */
 module.exports.getVerifiedTokens = async (username) => {
+  let verifiedTokens = await getCache(username);
+  if (verifiedTokens) {
+    return JSON.parse(verifiedTokens);
+  }
   const resolvedAccounts = await getAccountsByUsername(username);
-  const verifiedTokens = [];
-
+  verifiedTokens = [];
   if (resolvedAccounts.length > 0) {
     // Fetch tokens and verify accounts
     for (const account of resolvedAccounts) {
@@ -229,17 +238,23 @@ module.exports.getVerifiedTokens = async (username) => {
       const decodedToken = await verifyToken(token);
       verifiedTokens.push(decodedToken.payload);
     }
+    // Save result to cache
+    await setCache(username, JSON.stringify(verifiedTokens), usernameCacheExpiration);
   }
-
   return verifiedTokens;
 };
 
 // Resolve an ORGiD
 /* istanbul ignore next */
 module.exports.resolveOrgId = async orgId => {
+  let didResult = await getCache(orgId);
+  if (didResult) {
+    return JSON.parse(didResult);
+  }
   const orgIdResolver = createOrgIdResolver();
-  const didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
+  didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
   // console.log('DID_Result', JSON.stringify(didResult, null, 2));
   validateDidDocumentChecks(didResult);
+  await setCache(orgId, JSON.stringify(didResult), orgIdCacheExpiration);
   return didResult;
 };

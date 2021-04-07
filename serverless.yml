@@ -13,6 +13,11 @@ functions:
   telegram:
     handler: src/index.handler
     environment: ${file(env.yml)}
+    vpc:
+      securityGroupIds:
+        - sg-03c2c9512ce833b4e
+      subnetIds:
+        - subnet-4e276541
     events:
       - http:
           path: /

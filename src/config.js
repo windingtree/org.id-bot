@@ -10,3 +10,12 @@ module.exports.unauthorizedUserMessagesLimit = Number(process.env.UNAUTHORIZED_U
 module.exports.messagesHandlerMode = process.env.MESSAGES_HANDLER_MODE;
 module.exports.webhookEnabled = process.env.WEBHOOK_ENABLED === 'yes';
 module.exports.webhookPath = process.env.WEBHOOK_PATH || '/';
+module.exports.redisConfig = {
+  host: process.env.REDIS_HOST || 'localhost',
+  port: process.env.REDIS_PORT || 6379,
+  password: process.env.REDIS_PSWD || ''
+};
+
+// Constants
+module.exports.orgIdCacheExpiration = 60 * 60 * 2; // 2 hours
+module.exports.usernameCacheExpiration = 60 * 15; // 15 min
