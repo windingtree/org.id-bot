@@ -15,7 +15,7 @@ functions:
     environment: ${file(env.yml)}
     vpc:
       securityGroupIds:
-        - sg-05f9f0048107555e9
+        - sg-03c2c9512ce833b4e
       subnetIds:
         - subnet-cefc20f0
         - subnet-01d85066
