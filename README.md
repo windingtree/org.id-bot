@@ -22,11 +22,15 @@ UNAUTHORIZED_USER_MESSAGES_LIMIT=5
 MESSAGES_HANDLER_MODE=direct
 WEBHOOK_ENABLED=yes
 WEBHOOK_PATH=/
+REDIS_HOST=<REDIS_HOST>
+REDIS_PORT=<REDIS_PORT>
+REDIS_PSWD=<REDIS_PASSWORD>
 ```
 
 ## Start the Bot
 
 ```bash
+./scripts/servers/start.sh
 yarn start
 ```
 
