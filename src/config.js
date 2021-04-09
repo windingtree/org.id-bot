@@ -16,6 +16,7 @@ module.exports.redisConfig = {
   password: process.env.REDIS_PSWD || '',
   db: process.env.REDIS_DB || 0,
 };
+module.exports.twitterApiKey = process.env.TWITTER_API_KEY;
 
 // Constants
 module.exports.orgIdCacheExpiration = 60 * 15; // 15 min
