@@ -120,7 +120,7 @@ const parseTrustAssertions = didResult => {
       if (v.type === 'domain') {
         const dnsVerified = trustAssertions.filter(t => t.type === 'dns' && t.claim === v.claim && t.verified)[0];
         const domainVerified = dnsVerified || v.verified;
-        a.push(`${domainVerified ? '✅' : '⚠'} ${extractHostname(v.proof)}${!domainVerified ? ' — not verified' : ''}`);
+        a.push(`${domainVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!domainVerified ? ' — not verified' : ''}`);
       }
       return a;
     },
@@ -131,7 +131,7 @@ const parseTrustAssertions = didResult => {
       if (
         v.type === 'social' &&
         !v.claim.match(/facebook/gi) &&
-        !v.claim.match(/twitter/gi) &&
+        !v.claim.match(/linkedin/gi) &&
         !v.claim.match(/instagram/gi)
       ) {
         const socialVerified = v.verified;

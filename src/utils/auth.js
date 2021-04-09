@@ -1,5 +1,9 @@
 const moment = require('moment');
-const { OrgIdResolver, httpFetchMethod } = require('@windingtree/org.id-resolver');
+const {
+  OrgIdResolver,
+  twitterFetchMethod,
+  httpFetchMethod
+} = require('@windingtree/org.id-resolver');
 const {
   addresses,
   OrgIdContract
@@ -25,7 +29,8 @@ const {
   ethereumNetwork,
   infuraKey,
   orgIdCacheExpiration,
-  usernameCacheExpiration
+  usernameCacheExpiration,
+  twitterApiKey
 } = require('../config');
 
 const web3 = new Web3(`https://${ethereumNetwork}.infura.io/v3/${infuraKey}`);
@@ -83,6 +88,9 @@ const createOrgIdResolver = (web3Instance = web3, orgIdContractAddress = orgIdAd
     web3: web3Instance,
     orgId: orgIdContractAddress,
     lifDeposit: lifStakeAddress
+  });
+  resolver.registerSocialFetchMethod(twitterFetchMethod, {
+    key: twitterApiKey
   });
   resolver.registerFetchMethod(httpFetchMethod);
   return resolver;
