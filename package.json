@@ -9,7 +9,8 @@
     "lint": "npx eslint src test",
     "test": "scripts/test.sh",
     "test:coverage": "COVERAGE=true scripts/test.sh",
-    "test:coverage:ci": "COVERAGE=true CONTINUOUS_INTEGRATION=true scripts/test.sh"
+    "test:coverage:ci": "COVERAGE=true CONTINUOUS_INTEGRATION=true scripts/test.sh",
+    "servers": "scripts/servers/start.sh"
   },
   "repository": {
     "type": "git",
@@ -35,7 +36,7 @@
   "dependencies": {
     "@windingtree/org.id": "1.1.5",
     "@windingtree/org.id-lif-deposit": "1.0.2",
-    "@windingtree/org.id-resolver": "2.1.0",
+    "@windingtree/org.id-resolver": "2.2.0",
     "axios": "0.21.1",
     "dotenv": "8.2.0",
     "ethers": "5.1.0",

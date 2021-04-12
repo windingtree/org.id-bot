@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { Markup } = require('telegraf');
 const {
   resolveOrgId,
@@ -120,7 +121,11 @@ const parseTrustAssertions = didResult => {
       if (v.type === 'domain') {
         const dnsVerified = trustAssertions.filter(t => t.type === 'dns' && t.claim === v.claim && t.verified)[0];
         const domainVerified = dnsVerified || v.verified;
-        a.push(`${domainVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!domainVerified ? ' — not verified' : ''}`);
+        let creationDate;
+        if (v.whois) {
+          creationDate = ` domain registered on ${moment(v.whois.creationDate).format('DD MMM YYYY')} `;
+        }
+        a.push(`${domainVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${creationDate}${!domainVerified ? ' — not verified' : ''}`);
       }
       return a;
     },
