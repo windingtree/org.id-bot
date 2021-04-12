@@ -2,7 +2,8 @@ const moment = require('moment');
 const {
   OrgIdResolver,
   twitterFetchMethod,
-  httpFetchMethod
+  httpFetchMethod,
+  whoisService
 } = require('@windingtree/org.id-resolver');
 const {
   addresses,
@@ -93,6 +94,7 @@ const createOrgIdResolver = (web3Instance = web3, orgIdContractAddress = orgIdAd
     key: twitterApiKey
   });
   resolver.registerFetchMethod(httpFetchMethod);
+  resolver.registerService(whoisService);
   return resolver;
 };
 module.exports.createOrgIdResolver = createOrgIdResolver;

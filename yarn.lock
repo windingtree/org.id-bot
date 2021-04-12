@@ -1029,10 +1029,10 @@
   dependencies:
     "@openzeppelin/contracts" "2.5.0"
 
-"@windingtree/org.id-resolver@2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@windingtree/org.id-resolver/-/org.id-resolver-2.1.0.tgz#60af09648466025a49d4c4d2c665c25c831c79af"
-  integrity sha512-DYoMrSyLpszc/Hjhn/tSxtbgqUY7tMQC21Wr9w38ECWYhYoi+5QriVFwjD0bMf3qqKHb5WQLicxGiaPMa0AYaA==
+"@windingtree/org.id-resolver@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@windingtree/org.id-resolver/-/org.id-resolver-2.2.0.tgz#96f3b5423048349a3197b4af611be947395ca43c"
+  integrity sha512-pcnLnLi0JPjdlrJS/QxxE0MmDjolhJ03l+cfx0Gsx7dDELUE/FfYroQp3dmnVlb/FoPUUG+Th1PjPOOrynt5HQ==
   dependencies:
     "@windingtree/org.id" "1.1.5"
     "@windingtree/org.id-lif-deposit" "1.0.2"
@@ -1042,6 +1042,7 @@
     org.json-schema-0.3 "npm:@windingtree/org.json-schema@0.3.4"
     org.json-schema-0.4 "npm:@windingtree/org.json-schema@0.4.3"
     regenerator-runtime "0.13.7"
+    whois-light "1.0.3"
 
 "@windingtree/org.id@1.1.5":
   version "1.1.5"
@@ -8139,6 +8140,11 @@ which@^1.2.9:
   integrity sha512-HxJdYWq1MTIQbJ3nw0cqssHoTNU267KlrDuGZ1WYlxDStUtKUhOaJmh112/TZmHxxUfuJqPXSOm7tDyas0OSIQ==
   dependencies:
     isexe "^2.0.0"
+
+whois-light@1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/whois-light/-/whois-light-1.0.3.tgz#37ccfc3f8568652353dc10797055bce694fbacf5"
+  integrity sha512-oFJuw6/Kgd4ptlEe6rDo0lF56dUEU53ncB/AVu6txttn0SpBKs5PICbQR9IwfAe9cBpuZupEVPc+Oi4aoD32kA==
 
 wide-align@1.1.3, wide-align@^1.1.0:
   version "1.1.3"
