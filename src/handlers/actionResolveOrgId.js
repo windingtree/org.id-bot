@@ -140,7 +140,13 @@ const parseTrustAssertions = didResult => {
         !v.claim.match(/instagram/gi)
       ) {
         const socialVerified = v.verified;
-        a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified' : ''}`);
+        if (v.proof.match(/^http/)) {
+          a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified' : ''}`);
+        } else if (v.proof.match(/^did/)) {
+          a.push(`${socialVerified ? '✅' : '⚠'} credential: ${v.proof}${!socialVerified ? ' — not verified' : ''}`);
+        } else {
+          // Unknown proof type
+        }
       }
       return a;
     },

@@ -16,6 +16,7 @@ const {
 } = require('./handlers/actionResolveOrgId');
 const { onInlineQuery } = require('./handlers/inlineQuery');
 const { onMessage } = require('./handlers/message');
+const handleCreateGroupProof = require('./handlers/createGroupProof');
 
 const bot = new Telegraf(
   botToken,
@@ -45,6 +46,7 @@ bot.start(ctx => ctx.replyWithMarkdown(
 ));
 bot.command('info', handleInfoCommand);
 bot.help(handleInfoCommand);
+bot.command('proof', handleCreateGroupProof);
 
 // Actions
 bot.action(/^previewOrgId:\d+$/, onActionPreviewOrgId);
