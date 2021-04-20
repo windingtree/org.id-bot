@@ -17,7 +17,7 @@ const {
 } = require('../config');
 
 const handleDirectMessages = async ctx => {
-  let query = ctx.message.text;
+  let query = ctx.message.text.replace(/^\//, '');
 
   if (ctx.message.forward_from && ctx.message.forward_from !== ctx.message.chat.username) {
     query = ctx.message.forward_from.username;
