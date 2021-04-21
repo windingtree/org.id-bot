@@ -16,7 +16,7 @@ module.exports = async ctx => {
     }
     const orgId = ctx.message.text.split('/proof ')[1];
     await ctx.reply(`Resolving of the ${orgId} is started. Please wait`);
-    const didResult = await resolveOrgId(orgId);
+    const didResult = await resolveOrgId(orgId, true);
     console.log(ctx.chat);
 
     const issuerDid = vcIssuerDid;
@@ -48,6 +48,6 @@ module.exports = async ctx => {
       filename: 'group_verification_proof.json'
     });
   } catch (error) {
-    ctx.reply(error.message);
+    ctx.reply('Unable to create a proof. Please contact an administrator of the bot');
   }
 };
