@@ -258,9 +258,9 @@ module.exports.getVerifiedTokens = async (username) => {
 /* istanbul ignore next */
 module.exports.resolveOrgId = async orgId => {
   let didResult = await getCache(orgId);
-  // if (didResult) {
-  //   return JSON.parse(didResult);
-  // }
+  if (didResult) {
+    return JSON.parse(didResult);
+  }
   const orgIdResolver = createOrgIdResolver();
   didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
   // console.log('DID_Result', JSON.stringify(didResult, null, 2));
