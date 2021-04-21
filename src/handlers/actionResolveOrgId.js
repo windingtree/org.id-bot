@@ -143,7 +143,7 @@ const parseTrustAssertions = didResult => {
         if (v.proof.match(/^http/)) {
           a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified' : ''}`);
         } else if (v.proof.match(/^did/)) {
-          a.push(`${socialVerified ? '✅' : '⚠'} credential: ${v.proof}${!socialVerified ? ' — not verified' : ''}`);
+          a.push(`${socialVerified ? '✅' : '⚠'} [${v.claim}](${v.claim})${!socialVerified ? ' — not verified' : ''}`);
         } else {
           // Unknown proof type
         }
