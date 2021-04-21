@@ -16,7 +16,7 @@ module.exports = async ctx => {
     }
     const orgId = ctx.message.text.split('/proof ')[1];
     await ctx.reply(`Resolving of the ${orgId} is started. Please wait`);
-    const didResult = await resolveOrgId(orgId, true);
+    const didResult = await resolveOrgId(orgId, true, true);
     console.log(ctx.chat);
 
     const issuerDid = vcIssuerDid;
