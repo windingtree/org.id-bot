@@ -256,15 +256,17 @@ module.exports.getVerifiedTokens = async (username) => {
 
 // Resolve an ORGiD
 /* istanbul ignore next */
-module.exports.resolveOrgId = async orgId => {
+module.exports.resolveOrgId = async (orgId, doNoUseCache = false) => {
   let didResult = await getCache(orgId);
-  if (didResult) {
+  if (didResult && !doNoUseCache) {
     return JSON.parse(didResult);
   }
   const orgIdResolver = createOrgIdResolver();
   didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
   // console.log('DID_Result', JSON.stringify(didResult, null, 2));
   validateDidDocumentChecks(didResult);
-  await setCache(orgId, JSON.stringify(didResult), orgIdCacheExpiration);
+  if (!doNoUseCache) {
+    await setCache(orgId, JSON.stringify(didResult), orgIdCacheExpiration);
+  }
   return didResult;
 };
