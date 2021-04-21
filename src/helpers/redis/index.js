@@ -74,10 +74,30 @@ const asyncSet = (...args) => new Promise(
   }
 );
 
+// Asynchronous version of del
+const asyncDel = (...args) => new Promise(
+  (resolve, reject) => {
+    const redisClient = createClient();
+    redisClient.del.apply(
+      redisClient,
+      [
+        ...args,
+        error => {
+          redisClient.quit();
+          if (error) {
+            return reject(error);
+          }
+          resolve();
+        }
+      ]
+    );
+  }
+);
 
 
 module.exports = {
   redis,
   asyncGet,
-  asyncSet
+  asyncSet,
+  asyncDel
 };

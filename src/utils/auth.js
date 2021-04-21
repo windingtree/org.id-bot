@@ -23,7 +23,8 @@ const BotError = require('../utils/error');
 const { zeroAddress } = require('../utils/constants');
 const {
   getCache,
-  setCache
+  setCache,
+  delCache
 } = require('../utils/cache');
 
 const {
@@ -256,9 +257,12 @@ module.exports.getVerifiedTokens = async (username) => {
 
 // Resolve an ORGiD
 /* istanbul ignore next */
-module.exports.resolveOrgId = async (orgId, doNoUseCache = false) => {
+module.exports.resolveOrgId = async (orgId, doNoUseCache = false, removeCached = false) => {
   let didResult = await getCache(orgId);
-  if (didResult && !doNoUseCache) {
+  if (didResult && removeCached) {
+    await delCache(orgId);
+  }
+  if (didResult && !doNoUseCache && !removeCached) {
     return JSON.parse(didResult);
   }
   const orgIdResolver = createOrgIdResolver();
