@@ -26,7 +26,6 @@ module.exports = async ctx => {
     const signatureType = vcKeyType;
     const privateKey = vcKey;
     const proofPurpose = 'assertionMethod';
-    const expirationDate = new Date(Date.now() + 60*60*24).toISOString();
     const subject = {
       id: holderDid,
       type: 'social',
@@ -40,8 +39,7 @@ module.exports = async ctx => {
       verificationMethod,
       signatureType,
       privateKey,
-      proofPurpose,
-      expirationDate
+      proofPurpose
     );
     const vcBuffer = Buffer.from(JSON.stringify(vc, null, 2), 'utf8');
     await ctx.reply(`Please upload following proof to the org.json of the ${holderDid}`);

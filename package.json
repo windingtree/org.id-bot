@@ -1,6 +1,6 @@
 {
   "name": "@windingtree/org.id-bot",
-  "version": "0.3.9",
+  "version": "0.3.10",
   "description": "ORGiD bot",
   "private": true,
   "main": "src/index.js",

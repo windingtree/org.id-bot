@@ -1089,10 +1089,10 @@
   dependencies:
     "@openzeppelin/contracts" "2.5.0"
 
-"@windingtree/org.id-resolver@2.3.4":
-  version "2.3.4"
-  resolved "https://registry.yarnpkg.com/@windingtree/org.id-resolver/-/org.id-resolver-2.3.4.tgz#adcc62d17ef2ef45da59e63e153a0a54e5aa5f32"
-  integrity sha512-j8gq7NxTXdHQJ+X2XSlQ7dbYvaKhOeIkJCMor0HuDdBgpwLbKKrLmUijTRFN2AMYc7q47mFGwibwJTMNe6osqA==
+"@windingtree/org.id-resolver@2.4.0":
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/@windingtree/org.id-resolver/-/org.id-resolver-2.4.0.tgz#42322a1159cb01b432f9c9a899dcf9f613a90b97"
+  integrity sha512-VOuyubwsc55amvK0RaaeCj1gWW96lQWmpDUlOgSLc7qAYSsCpUBYQ6V16GvpJsVby8eu83tgi9jBkh8uppaU3w==
   dependencies:
     "@windingtree/org.id" "1.1.5"
     "@windingtree/org.id-lif-deposit" "1.0.2"
