@@ -1,7 +1,5 @@
-const {
-  Telegraf,
-  Markup
-} = require('telegraf');
+process.setMaxListeners(0);
+const { Telegraf } = require('telegraf');
 const telegrafAws = require('telegraf-aws');
 
 const {
@@ -9,6 +7,7 @@ const {
   webhookEnabled,
   webhookPath
 } = require('./config');
+const onStartMessage = require('./handlers/onStart');
 const handleInfoCommand = require('./handlers/commandInfo');
 const {
   onActionPreviewOrgId,
@@ -29,23 +28,12 @@ const bot = new Telegraf(
     : undefined
 );
 
-const botIntroText = `Hi there!
-
-I am the one and only ORGiD Bot created by Winding Tree.
-
-The world of cryptocurrency is rife with scammers and phishing attempts. My job is to help you verify people on Telegram using blockchain technology so that you can do business with confidence in a digital world.
-
-Try asking me @praawt for an example.`;
-
 bot.catch(error => console.error('Unhandled error:', error));
-bot.start(ctx => ctx.replyWithMarkdown(
-  botIntroText,
-  Markup.inlineKeyboard([
-    Markup.button.callback('How it works', '/info'),
-  ])
-));
-bot.command('info', handleInfoCommand);
+bot.start(onStartMessage);
 bot.help(handleInfoCommand);
+
+// Commands
+bot.command('info', handleInfoCommand);
 bot.command('proof', handleCreateGroupProof);
 
 // Actions

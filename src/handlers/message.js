@@ -54,9 +54,7 @@ Click the buttons below to see report for each ORGiD.`,
       return ctx.reply(
         `${query}
 
-This Telegram user is not connected with an ORGiD record.
-
-⚠ Beware of fake organizations and copied identities. ⚠`);
+This Telegram user is not connected with an ORGiD record.`);
     }
   } else {
     return ctx.reply('Please make sure that the username is provided in the format of @username');
@@ -83,7 +81,9 @@ const handleChatMessages = async (ctx, next) => {
     ctx.session.unauthorizedUsers[username] >= unauthorizedUserMessagesLimit) {
     // Reset unauthorized user
     ctx.session.unauthorizedUsers[username] = 1;
-    return ctx.reply(`Warning: User @${username} does not represent any ORGiD registered company`);
+    return ctx.reply(`@${username}
+
+This Telegram user is not connected with an ORGiD record.`);
   } else {
     ctx.session.unauthorizedUsers[username] += 1;
     console.log(`Reset unauthorized user [${username}] messages count: ${ctx.session.unauthorizedUsers[username]}`);
