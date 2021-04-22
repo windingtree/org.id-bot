@@ -17,7 +17,7 @@ const {
 } = require('../config');
 
 const handleDirectMessages = async ctx => {
-  let query = ctx.message.text;
+  let query = ctx.message.text.replace(/^\//, '');
 
   if (ctx.message.forward_from && ctx.message.forward_from !== ctx.message.chat.username) {
     query = ctx.message.forward_from.username;
@@ -52,11 +52,9 @@ Click the buttons below to see report for each ORGiD.`,
       }
     } else {
       return ctx.reply(
-        `${query}
+        `${query.match(/^@/) ? query : `@${query}`}
 
-This Telegram user is not connected with an ORGiD record.
-
-⚠ Beware of fake organizations and copied identities. ⚠`);
+This Telegram user is not connected with an ORGiD record.`);
     }
   } else {
     return ctx.reply('Please make sure that the username is provided in the format of @username');
@@ -83,7 +81,9 @@ const handleChatMessages = async (ctx, next) => {
     ctx.session.unauthorizedUsers[username] >= unauthorizedUserMessagesLimit) {
     // Reset unauthorized user
     ctx.session.unauthorizedUsers[username] = 1;
-    return ctx.reply(`Warning: User @${username} does not represent any ORGiD registered company`);
+    return ctx.reply(`@${username}
+
+This Telegram user is not connected with an ORGiD record.`);
   } else {
     ctx.session.unauthorizedUsers[username] += 1;
     console.log(`Reset unauthorized user [${username}] messages count: ${ctx.session.unauthorizedUsers[username]}`);

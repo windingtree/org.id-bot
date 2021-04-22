@@ -17,6 +17,9 @@ module.exports.redisConfig = {
   db: process.env.REDIS_DB || 0,
 };
 module.exports.twitterApiKey = process.env.TWITTER_API_KEY;
+module.exports.vcIssuerDid = process.env.VC_ISSUER_DID;
+module.exports.vcKeyType = process.env.VC_KEY_TYPE;
+module.exports.vcKey = process.env.VC_KEY;
 
 // Constants
 module.exports.orgIdCacheExpiration = 60 * 15; // 15 min

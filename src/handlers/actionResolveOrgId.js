@@ -1,3 +1,4 @@
+const moment = require('moment');
 const { Markup } = require('telegraf');
 const {
   resolveOrgId,
@@ -78,6 +79,7 @@ const { ethereumNetwork } = require('../config');
 //   }
 // };
 
+// Resolve an ORGiD and show report with raw data obtained from the resolver
 const resolveOrgIdFlow = async (ctx, orgId) => {
   // Show welcome message
   await ctx.answerCbQuery(`Resolving of the ${orgId} is started. Please wait`);
@@ -98,29 +100,28 @@ const orgIdsButton = (didResults, action = 'resolveOrgId', indexed = false) => M
       const name = getDeepValue(didDocument, 'legalEntity.legalName') ||
         getDeepValue(didDocument, 'organizationalUnit.name');
       const orgId = didDocument.id.split(':')[2];
-      return Markup.button.callback(`${name} - ${orgId}`, `${action}${indexed ? ':'+index : ''}`);
+      return Markup.button.callback(`${name} — ${orgId}`, `${action}${indexed ? ':'+index : ''}`);
     }
   )
 );
 module.exports.orgIdsButton = orgIdsButton;
 
-const extractHostname = url => {
-  try {
-    return (new URL(url).hostname).replace('www.', '');
-  } catch(error) {
-    console.error(error);
-    return url;
-  }
-};
-
 const parseTrustAssertions = didResult => {
+  let isSomeEvidenceWrong = false;
   const trustAssertions = getDeepValue(didResult, 'trust.assertions');
   const websites = trustAssertions.reduce(
     (a, v) => {
       if (v.type === 'domain') {
         const dnsVerified = trustAssertions.filter(t => t.type === 'dns' && t.claim === v.claim && t.verified)[0];
         const domainVerified = dnsVerified || v.verified;
-        a.push(`${domainVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!domainVerified ? ' — not verified' : ''}`);
+        let creationDate;
+        if (v.whois) {
+          creationDate = ` domain registered on ${moment(v.whois.creationDate).format('DD MMM YYYY')} (from WHOIS data)`;
+        }
+        if (!domainVerified) {
+          isSomeEvidenceWrong = true;
+        }
+        a.push(`${domainVerified ? '✅' : '⚠'} Website [${v.claim}](${v.proof})${domainVerified ? ' — verified' : ''}\n${creationDate}\n`);
       }
       return a;
     },
@@ -135,24 +136,46 @@ const parseTrustAssertions = didResult => {
         !v.claim.match(/instagram/gi)
       ) {
         const socialVerified = v.verified;
-        a.push(`${socialVerified ? '✅' : '⚠'} [${extractHostname(v.proof)}](${v.proof})${!socialVerified ? ' — not verified' : ''}`);
+        let proofSubject = '';
+        if (v.claim.match(/twitter/i)) {
+          proofSubject = 'Twitter';
+        } else if (v.claim.match(/t.me/i)) {
+          proofSubject = 'Telegram';
+        }
+        if (v.proof.match(/^http/)) {
+          // ORGiD publishing case
+          a.push(`${socialVerified ? '✅' : '⚠'} ${proofSubject !== '' ? proofSubject+' — ' : ''}[${withEllipsis(v.proof, 34)}](${v.proof})${socialVerified ? ' — verified' : ''}`);
+        } else if (v.proof.match(/^did/)) {
+          // VC proof case
+          a.push(`${socialVerified ? '✅' : '⚠'} ${proofSubject !== '' ? proofSubject+' — ' : ''}[${v.claim}](${v.claim})${socialVerified ? ' — verified' : ''}`);
+        } else {
+          // Unknown proof type
+          console.log(`Unknown proof type provided: ${v.claim}`);
+        }
+        if (!socialVerified) {
+          isSomeEvidenceWrong = true;
+        }
       }
       return a;
     },
     []
   );
 
-  return `${websites.length > 0 ? websites.join('\n') : ''}
-${other.length > 0 ? other.join('\n') : ''}`.trim();
+  return {
+    evidence: `${websites.length > 0 ? websites.join('\n') : ''}
+${other.length > 0 ? other.join('\n') : ''}`.trim(),
+    isSomeEvidenceWrong
+  };
 };
 module.exports.parseTrustAssertions = parseTrustAssertions;
 
 // Generate ORGiD resolver report
 const orgIdReport = async (ctx, didResult, query) => {
+  let isSomethingWrong = false;
   const name = getDeepValue(didResult.didDocument, 'legalEntity.legalName') ||
     getDeepValue(didResult.didDocument, 'organizationalUnit.name');
 
-  const evidence = parseTrustAssertions(didResult);
+  const { evidence, isSomeEvidenceWrong } = parseTrustAssertions(didResult);
   const {
     orgIdCreationDate,
     isFresh
@@ -165,22 +188,26 @@ const orgIdReport = async (ctx, didResult, query) => {
   let lifStakeDate = false;
   if (isLifStakeOk) {
     lifStakeDate = await fetchLifDepositCreationDate(didResult.id);
+  } else {
+    isSomethingWrong = true;
+  }
+  if (isSomeEvidenceWrong) {
+    isSomethingWrong = true;
   }
 
   return ctx.replyWithMarkdown(
     `${query ? 'User *@'+query+'* is connected with following ORGiD:\n' : ''}
-*ORGANIZATION NAME*
-
-${name}
+*${name}*
+ORGiD — [${withEllipsis(didResult.id, 10)}](https://${ethereumNetwork === 'ropsten' ? 'staging.' : ''}marketplace.windingtree.com/organization/${didResult.id}) ${orgIdCreationDate ? '— created on '+orgIdCreationDate : ''}
 
 *EVIDENCE*
 
 ${evidence ? evidence : '❌ No evidence provided'}
-${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}${lifStakeWithdrawalRequest !== null ? '\n⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
-✅ *ORGiD* ${orgIdCreationDate ? '— created on '+orgIdCreationDate : ''} — [${withEllipsis(didResult.id, 10)}](https://${ethereumNetwork === 'ropsten' ? 'staging.' : ''}marketplace.windingtree.com/organization/${didResult.id})
 
-⚠ Double check each link to verify authenticity ⚠
-${isFresh ? '⚠ ORGiD registered only 1 day ago ⚠' : ''}`,
+${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}${lifStakeWithdrawalRequest !== null ? '\n⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
+
+${isSomethingWrong ? '⚠ Double check each link to verify authenticity. ⚠' : '*IMPORTANT*: Double check each link to verify authenticity of the organization.'}
+${isFresh ? '⚠ ORGiD registered only 1 day ago. ⚠' : ''}`,
     {
       disable_web_page_preview: true,
       ...orgIdsButton([

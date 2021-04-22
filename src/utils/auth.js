@@ -2,7 +2,8 @@ const moment = require('moment');
 const {
   OrgIdResolver,
   twitterFetchMethod,
-  httpFetchMethod
+  httpFetchMethod,
+  whoisService
 } = require('@windingtree/org.id-resolver');
 const {
   addresses,
@@ -22,7 +23,8 @@ const BotError = require('../utils/error');
 const { zeroAddress } = require('../utils/constants');
 const {
   getCache,
-  setCache
+  setCache,
+  delCache
 } = require('../utils/cache');
 
 const {
@@ -93,6 +95,7 @@ const createOrgIdResolver = (web3Instance = web3, orgIdContractAddress = orgIdAd
     key: twitterApiKey
   });
   resolver.registerFetchMethod(httpFetchMethod);
+  resolver.registerService(whoisService);
   return resolver;
 };
 module.exports.createOrgIdResolver = createOrgIdResolver;
@@ -254,15 +257,20 @@ module.exports.getVerifiedTokens = async (username) => {
 
 // Resolve an ORGiD
 /* istanbul ignore next */
-module.exports.resolveOrgId = async orgId => {
+module.exports.resolveOrgId = async (orgId, doNoUseCache = false, removeCached = false) => {
   let didResult = await getCache(orgId);
-  if (didResult) {
+  if (didResult && removeCached) {
+    await delCache(orgId);
+  }
+  if (didResult && !doNoUseCache && !removeCached) {
     return JSON.parse(didResult);
   }
   const orgIdResolver = createOrgIdResolver();
   didResult = await orgIdResolver.resolve(`did:orgid:${orgId}`);
   // console.log('DID_Result', JSON.stringify(didResult, null, 2));
   validateDidDocumentChecks(didResult);
-  await setCache(orgId, JSON.stringify(didResult), orgIdCacheExpiration);
+  if (!doNoUseCache) {
+    await setCache(orgId, JSON.stringify(didResult), orgIdCacheExpiration);
+  }
   return didResult;
 };

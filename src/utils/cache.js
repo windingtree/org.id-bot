@@ -1,6 +1,7 @@
 const {
   asyncGet,
-  asyncSet
+  asyncSet,
+  asyncDel
 } = require('../helpers/redis');
 const { orgIdCacheExpiration } = require('../config');
 
@@ -14,3 +15,6 @@ module.exports.setCache = (key, value, expire = orgIdCacheExpiration) => asyncSe
 
 // Get key from Redis async
 module.exports.getCache = key => asyncGet(key);
+
+// Remove key from the cache
+module.exports.delCache = key => asyncDel(key);
