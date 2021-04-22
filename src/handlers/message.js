@@ -52,7 +52,7 @@ Click the buttons below to see report for each ORGiD.`,
       }
     } else {
       return ctx.reply(
-        `${query}
+        `${query.match(/^@/) ? query : `@${query}`}
 
 This Telegram user is not connected with an ORGiD record.`);
     }
