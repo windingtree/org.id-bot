@@ -1,6 +1,6 @@
 {
   "name": "@windingtree/org.id-bot",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "ORGiD bot",
   "private": true,
   "main": "src/index.js",
@@ -31,12 +31,12 @@
   },
   "homepage": "https://github.com/windingtree/org.id-bot#readme",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=10.0.0"
   },
   "dependencies": {
     "@windingtree/org.id": "1.1.5",
     "@windingtree/org.id-lif-deposit": "1.0.2",
-    "@windingtree/org.id-resolver": "2.4.0",
+    "@windingtree/org.id-resolver": "2.4.1",
     "@windingtree/vc": "0.1.4",
     "axios": "0.21.1",
     "dotenv": "8.2.0",
