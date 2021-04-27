@@ -200,8 +200,7 @@ ${evidence ? evidence : '❌ No evidence provided'}
 
 ${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}${lifStakeWithdrawalRequest !== null ? '\n⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
 
-${isSomeEvidenceWrong ? '⚠ Double check each link to verify authenticity. ⚠' : '*IMPORTANT*: Double check each link to verify authenticity of the organization.'}
-${isFresh ? '⚠ ORGiD registered only 1 day ago. ⚠' : ''}`,
+${evidence ? isSomeEvidenceWrong ? '⚠ Double check each link to verify authenticity. ⚠\n' : '*IMPORTANT*: Double check each link to verify authenticity of the organization.\n' : ''}${isFresh ? '⚠ ORGiD registered only 1 day ago. ⚠' : ''}`,
     {
       disable_web_page_preview: true,
       ...orgIdsButton([
