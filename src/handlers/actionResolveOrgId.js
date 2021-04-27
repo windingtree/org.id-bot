@@ -121,7 +121,7 @@ const parseTrustAssertions = didResult => {
         if (!domainVerified) {
           isSomeEvidenceWrong = true;
         }
-        a.push(`${domainVerified ? '✅' : '⚠'} Website [${v.claim}](${v.proof})${domainVerified ? ' — verified' : ''}\n${creationDate}\n`);
+        a.push(`${domainVerified ? '✅' : '⚠'} Website — [${v.claim}](${v.proof})${domainVerified ? ' — verified' : ''}\n${creationDate}\n`);
       }
       return a;
     },
@@ -171,7 +171,6 @@ module.exports.parseTrustAssertions = parseTrustAssertions;
 
 // Generate ORGiD resolver report
 const orgIdReport = async (ctx, didResult, query) => {
-  let isSomethingWrong = false;
   const name = getDeepValue(didResult.didDocument, 'legalEntity.legalName') ||
     getDeepValue(didResult.didDocument, 'organizationalUnit.name');
 
@@ -188,11 +187,6 @@ const orgIdReport = async (ctx, didResult, query) => {
   let lifStakeDate = false;
   if (isLifStakeOk) {
     lifStakeDate = await fetchLifDepositCreationDate(didResult.id);
-  } else {
-    isSomethingWrong = true;
-  }
-  if (isSomeEvidenceWrong) {
-    isSomethingWrong = true;
   }
 
   return ctx.replyWithMarkdown(
@@ -206,7 +200,7 @@ ${evidence ? evidence : '❌ No evidence provided'}
 
 ${isLifStakeOk ? '✅ LÍF stake — '+lifStake+' LÍF staked on '+lifStakeDate : '❌ LÍF stake — not staked'}${lifStakeWithdrawalRequest !== null ? '\n⚠ Attention! The organization has sent a stake withdrawal request\n' : ''}
 
-${isSomethingWrong ? '⚠ Double check each link to verify authenticity. ⚠' : '*IMPORTANT*: Double check each link to verify authenticity of the organization.'}
+${isSomeEvidenceWrong ? '⚠ Double check each link to verify authenticity. ⚠' : '*IMPORTANT*: Double check each link to verify authenticity of the organization.'}
 ${isFresh ? '⚠ ORGiD registered only 1 day ago. ⚠' : ''}`,
     {
       disable_web_page_preview: true,
